@@ -16,5 +16,5 @@ public interface ICrossService<T> {
      * Delegating to update a T-object in dao
      * @param t - List of T-object which will be updating
      */
-    void update(List<T> t);
+    void save(List<T> t);
 }

@@ -1,6 +1,5 @@
 package org.it_academy.MK_JD2_90_22.json.dao.api;
 
-
 public interface ICrossController<T> {
 
 
@@ -15,5 +14,6 @@ public interface ICrossController<T> {
      * Delegating to update a T-object in dao
      * @param t - T-object which will be updating
      */
-    void update(T t);
+    void save(T t);
+
 }

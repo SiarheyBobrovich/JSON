@@ -19,7 +19,7 @@ public class DataSourceFactory implements AutoCloseable{
             throw new RuntimeException("Проверь имя драйвера!!!!", e);
         }
 
-        pool.setJdbcUrl("jdbc:postgresql://localhost:5432/demo");
+        pool.setJdbcUrl("jdbc:postgresql://localhost:5432/postgres");
         pool.setUser("postgres");
         pool.setPassword("172143");
 

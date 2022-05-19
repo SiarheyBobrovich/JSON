@@ -3,8 +3,8 @@ package org.it_academy.MK_JD2_90_22.json.controllers.json;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.it_academy.MK_JD2_90_22.json.dto.GroupStudentId;
-import org.it_academy.MK_JD2_90_22.json.services.GroupCreateDeleteListStudentsService;
+import org.it_academy.MK_JD2_90_22.json.dto.GroupStudentsList;
+import org.it_academy.MK_JD2_90_22.json.services.GroupSaveDeleteStudentsService;
 import org.it_academy.MK_JD2_90_22.json.services.api.ICrossService;
 
 import javax.servlet.ServletException;
@@ -16,7 +16,7 @@ import java.io.IOException;
 public class GroupCreateDeleteListStudentsServlet extends HttpServlet {
 
     private ObjectMapper mapper;
-    private static final ICrossService<GroupStudentId> service = GroupCreateDeleteListStudentsService.getInstance();
+    private static final ICrossService<GroupStudentsList> service = GroupSaveDeleteStudentsService.getInstance();
 
     public GroupCreateDeleteListStudentsServlet() {
         this.mapper = new ObjectMapper()

@@ -1,15 +1,14 @@
 package org.it_academy.MK_JD2_90_22.json.dao;
 
-import org.it_academy.MK_JD2_90_22.json.dao.api.ICRUDController;
+import org.it_academy.MK_JD2_90_22.json.dao.api.ICrossController;
 import org.it_academy.MK_JD2_90_22.json.dto.GroupStudentsList;
 import org.it_academy.MK_JD2_90_22.json.dto.StudentIdDto;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.List;
 
-public class GroupDao implements ICRUDController<GroupStudentsList> {
+public class GroupSaveDeleteStudentsDao implements ICrossController<GroupStudentsList> {
 
     private static final String INSERT_QUERY =
             "INSERT INTO " +
@@ -18,34 +17,15 @@ public class GroupDao implements ICRUDController<GroupStudentsList> {
                 "\tVALUES " +
                     "(?, ?);"
             ;
-
-    private static final String SELECT_QUERY =
-            "SELECT " +
-                "student_id " +
-            "FROM " +
-                "courses.students_in_groupe " +
-                "WHERE " +
-                    "group_name = ?;"
-            ;
-
-    private static final String UPDATE_QUERY =
-            "UPDATE " +
-                "courses.students_in_groupe " +
-                "SET " +
-                    "student_id=? " +
-                "WHERE " +
-                    "groupe_name = ?;"
-            ;
-
     private static final String DELETE_QUERY =
             "DELETE FROM " +
                 "courses.students_in_groupe " +
             "WHERE " +
                 "student_id = ?;";
 
-    private static GroupDao instance = new GroupDao();
+    private static final GroupSaveDeleteStudentsDao instance = new GroupSaveDeleteStudentsDao();
 
-    private GroupDao() {
+    private GroupSaveDeleteStudentsDao() {
     }
 
     @Override
@@ -65,16 +45,6 @@ public class GroupDao implements ICRUDController<GroupStudentsList> {
     }
 
     @Override
-    public List<GroupStudentsList> get(String id) {
-        return null;
-    }
-
-    @Override
-    public void update(GroupStudentsList groupStudentsList) {
-
-    }
-
-    @Override
     public void delete(GroupStudentsList groupStudentsList) {
         try(Connection connection = DataSourceFactory.getInstance().getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_QUERY)) {
@@ -89,7 +59,7 @@ public class GroupDao implements ICRUDController<GroupStudentsList> {
         }
     }
 
-    public static GroupDao getInstance() {
+    public static GroupSaveDeleteStudentsDao getInstance() {
         return instance;
     }
 }

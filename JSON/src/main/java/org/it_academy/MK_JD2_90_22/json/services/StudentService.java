@@ -1,11 +1,11 @@
 package org.it_academy.MK_JD2_90_22.json.services;
 
-import org.it_academy.MK_JD2_90_22.json.dto.Student;
+import org.it_academy.MK_JD2_90_22.json.dto.StudentIdDto;
 import org.it_academy.MK_JD2_90_22.json.services.api.ICRUDService;
 
 import java.util.List;
 
-public class StudentService implements ICRUDService<Student> {
+public class StudentService implements ICRUDService<StudentIdDto> {
 
     private static final StudentService instance;
 
@@ -16,22 +16,22 @@ public class StudentService implements ICRUDService<Student> {
     private StudentService() {
     }
 
-    public void create(Student student) {
+    public void create(StudentIdDto studentIdDto) {
 
     }
 
     @Override
-    public List<Student> select(String id) {
+    public List<StudentIdDto> select(String id) {
         return null;
     }
 
     @Override
-    public void update(Student student) {
+    public void update(StudentIdDto studentIdDto) {
 
     }
 
     @Override
-    public void delete(Student student) {
+    public void delete(StudentIdDto studentIdDto) {
 
     }
 

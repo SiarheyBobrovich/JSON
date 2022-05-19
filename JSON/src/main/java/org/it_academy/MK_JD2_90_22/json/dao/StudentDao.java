@@ -1,11 +1,11 @@
 package org.it_academy.MK_JD2_90_22.json.dao;
 
 import org.it_academy.MK_JD2_90_22.json.dao.api.ICRUDController;
-import org.it_academy.MK_JD2_90_22.json.dto.Student;
+import org.it_academy.MK_JD2_90_22.json.dto.StudentIdDto;
 
 import java.util.List;
 
-public class StudentDao implements ICRUDController<Student> {
+public class StudentDao implements ICRUDController<StudentIdDto> {
 
     private static StudentDao instance = new StudentDao();
 
@@ -13,20 +13,20 @@ public class StudentDao implements ICRUDController<Student> {
     }
 
     @Override
-    public void create(Student student) {
+    public void save(StudentIdDto studentIdDto) {
     }
 
     @Override
-    public List<Student> select(String id) {
+    public List<StudentIdDto> get(String id) {
         return null;
     }
 
     @Override
-    public void update(Student student) {
+    public void update(StudentIdDto studentIdDto) {
     }
 
     @Override
-    public void delete(Student student) {
+    public void delete(StudentIdDto studentIdDto) {
     }
 
     public static StudentDao getInstance() {

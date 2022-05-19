@@ -3,7 +3,7 @@ package org.it_academy.MK_JD2_90_22.json.controllers.json;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.it_academy.MK_JD2_90_22.json.dto.Group;
+import org.it_academy.MK_JD2_90_22.json.dto.GroupStudentsList;
 import org.it_academy.MK_JD2_90_22.json.services.GroupService;
 import org.it_academy.MK_JD2_90_22.json.services.api.ICRUDService;
 
@@ -16,7 +16,7 @@ import java.io.IOException;
 public class GroupServlet extends HttpServlet {
 
     private ObjectMapper mapper;
-    private static final ICRUDService<Group> service = GroupService.getInstance();
+    private static final ICRUDService<GroupStudentsList> service = GroupService.getInstance();
 
     public GroupServlet() {
         this.mapper = new ObjectMapper()

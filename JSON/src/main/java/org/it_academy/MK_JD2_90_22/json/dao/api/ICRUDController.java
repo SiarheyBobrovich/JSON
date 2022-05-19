@@ -8,13 +8,13 @@ public interface ICRUDController<T> {
      * Create a T-object in the db
      * @param t - The T-object which will be created
      */
-    void create(T t);
+    void save(T t);
 
     /**
      * Read all T-objects from the db
      * @return - List of all the objects from db
      */
-    List<T> select(String id);
+    List<T> get(String id);
 
     /**
      * Updating params of a T-object
