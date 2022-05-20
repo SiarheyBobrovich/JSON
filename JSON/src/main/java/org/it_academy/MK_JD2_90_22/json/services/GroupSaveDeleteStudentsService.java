@@ -1,7 +1,7 @@
 package org.it_academy.MK_JD2_90_22.json.services;
 
 import org.it_academy.MK_JD2_90_22.json.dao.GroupSaveDeleteStudentsDao;
-import org.it_academy.MK_JD2_90_22.json.dao.api.ICrossController;
+import org.it_academy.MK_JD2_90_22.json.dao.api.ICDController;
 import org.it_academy.MK_JD2_90_22.json.dto.GroupStudentsList;
 import org.it_academy.MK_JD2_90_22.json.services.api.ICrossService;
 
@@ -9,7 +9,7 @@ import java.util.List;
 
 public class GroupSaveDeleteStudentsService implements ICrossService<GroupStudentsList> {
 
-    private static final ICrossController<GroupStudentsList> controller =
+    private static final ICDController<GroupStudentsList> controller =
             GroupSaveDeleteStudentsDao.getInstance();
     private static final GroupSaveDeleteStudentsService instance;
 

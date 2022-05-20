@@ -1,47 +1,60 @@
 package org.it_academy.MK_JD2_90_22.json.dao;
 
-import org.it_academy.MK_JD2_90_22.json.dao.api.ICRUDController;
-import org.it_academy.MK_JD2_90_22.json.dto.GroupStudentsList;
-import org.it_academy.MK_JD2_90_22.json.dto.StudentIdDto;
+import org.it_academy.MK_JD2_90_22.json.dao.api.CRUD.IRC;
+import org.it_academy.MK_JD2_90_22.json.dao.api.CRUD.IUC;
+import org.it_academy.MK_JD2_90_22.json.dao.api.ICDController;
+import org.it_academy.MK_JD2_90_22.json.dao.api.IDao;
+import org.it_academy.MK_JD2_90_22.json.dao.entity.Group;
+import org.it_academy.MK_JD2_90_22.json.dto.GroupName;
+import org.it_academy.MK_JD2_90_22.json.dto.GroupRefresh;
+import org.it_academy.MK_JD2_90_22.json.exceptions.DaoException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
-public class GroupDao implements ICRUDController<GroupStudentsList> {
+public class GroupDao implements IDao, ICDController<GroupName>, IUC<GroupRefresh>, IRC<Group> {
 
     private static final String INSERT_QUERY =
             "INSERT INTO " +
-                "courses.students_in_groupe\n" +
-                "\t(groupe_name, student_id)\n" +
+                "courses.groups\n" +
+                "\t(name)\n" +
                 "\tVALUES " +
-                    "(?, ?);"
+                    "(?);"
             ;
 
     private static final String SELECT_QUERY =
             "SELECT " +
-                "student_id " +
+                "id, name " +
             "FROM " +
-                "courses.students_in_groupe " +
-                "WHERE " +
-                    "group_name = ?;"
+                "courses.groups;"
+            ;
+
+    private static final String SELECT_WHERE_QUERY =
+            "SELECT " +
+                    "id, name " +
+                    "FROM " +
+                    "courses.groups " +
+                    "WHERE id = ?;"
             ;
 
     private static final String UPDATE_QUERY =
             "UPDATE " +
-                "courses.students_in_groupe " +
+                "courses.groups " +
                 "SET " +
-                    "student_id=? " +
+                    "name = ? " +
                 "WHERE " +
-                    "groupe_name = ?;"
+                    "name = ?;"
             ;
 
     private static final String DELETE_QUERY =
             "DELETE FROM " +
-                "courses.students_in_groupe " +
+                "courses.groups " +
             "WHERE " +
-                "student_id = ?;";
+                "name = ?;";
 
     private static GroupDao instance = new GroupDao();
 
@@ -49,44 +62,78 @@ public class GroupDao implements ICRUDController<GroupStudentsList> {
     }
 
     @Override
-    public void save(GroupStudentsList groupStudentsList) {
-        String groupName = groupStudentsList.getGroupName();
-        try(Connection connection = DataSourceFactory.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(INSERT_QUERY)) {
-            for (StudentIdDto studentIdDto : groupStudentsList.getStudentsList()) {
-                preparedStatement.setString(1, groupName);
-                preparedStatement.setLong(2, studentIdDto.getId());
-                preparedStatement.execute();
-            }
+    public void save(GroupName groupRefresh) {
+
+        try {
+            execute(INSERT_QUERY, groupRefresh.getName());
 
         }catch (SQLException e) {
-            throw new RuntimeException("Студента или группы не существует", e);
+            throw new IllegalArgumentException("Такая группа уже существует", e);
         }
     }
 
     @Override
-    public List<GroupStudentsList> get(String id) {
-        return null;
-    }
+    public List<Group> getAll() {
 
-    @Override
-    public void update(GroupStudentsList groupStudentsList) {
-
-    }
-
-    @Override
-    public void delete(GroupStudentsList groupStudentsList) {
         try(Connection connection = DataSourceFactory.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(DELETE_QUERY)) {
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_QUERY)) {
 
-            for (StudentIdDto studentIdDto : groupStudentsList.getStudentsList()) {
-                preparedStatement.setLong(1, studentIdDto.getId());
-                preparedStatement.execute();
+            try(ResultSet rs = preparedStatement.executeQuery()) {
+                return map(rs);
             }
 
         }catch (SQLException e) {
-            throw new RuntimeException("Студента или группы не существует", e);
+            throw new DaoException("Обратитесь в службу поддержки!", e);
         }
+    }
+
+    @Override
+    public Group get(long id) {
+        try(Connection connection = DataSourceFactory.getInstance().getConnection();
+            PreparedStatement preparedStatement =
+                    connection.prepareStatement(SELECT_WHERE_QUERY)) {
+
+            preparedStatement.setLong(1, id);
+
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                return map(rs).get(0);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void update(GroupRefresh groupRefresh) {
+        try {
+            execute(UPDATE_QUERY, groupRefresh.getNewName(), groupRefresh.getOldName());
+
+        }catch (SQLException e) {
+            throw new IllegalArgumentException("Такая группа уже существует", e);
+        }
+    }
+
+    @Override
+    public void delete(GroupName groupRefresh) {
+        try {
+            execute(DELETE_QUERY, groupRefresh.getName());
+        }catch (SQLException e) {
+            throw new RuntimeException("Обратитесь в службу поддержки!", e);
+        }
+    }
+
+    private List<Group> map(ResultSet rs) throws SQLException {
+        List<Group> groups = new ArrayList<>();
+
+        while (rs.next()) {
+            groups.add(new Group(
+                    rs.getLong("id"),
+                    rs.getString("name"))
+            );
+        }
+
+        return groups;
     }
 
     public static GroupDao getInstance() {

@@ -1,6 +1,6 @@
 package org.it_academy.MK_JD2_90_22.json.dao;
 
-import org.it_academy.MK_JD2_90_22.json.dao.api.ICrossController;
+import org.it_academy.MK_JD2_90_22.json.dao.api.ICDController;
 import org.it_academy.MK_JD2_90_22.json.dto.GroupStudentsList;
 import org.it_academy.MK_JD2_90_22.json.dto.StudentIdDto;
 
@@ -8,7 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class GroupSaveDeleteStudentsDao implements ICrossController<GroupStudentsList> {
+public class GroupSaveDeleteStudentsDao implements ICDController<GroupStudentsList> {
 
     private static final String INSERT_QUERY =
             "INSERT INTO " +

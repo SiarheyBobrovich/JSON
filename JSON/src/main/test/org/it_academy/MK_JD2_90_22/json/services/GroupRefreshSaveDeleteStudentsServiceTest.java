@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class GroupSaveDeleteStudentsServiceTest {
+class GroupRefreshSaveDeleteStudentsServiceTest {
 
     private static final GroupSaveDeleteStudentsService instance =
             GroupSaveDeleteStudentsService.getInstance();

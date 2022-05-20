@@ -9,9 +9,9 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-class GroupSaveDeleteStudentsDaoTest {
+class GroupRefreshSaveDeleteStudentsDaoTest {
 
-    private static GroupDao instance = GroupDao.getInstance();
+    private static GroupSaveDeleteStudentsDao instance = GroupSaveDeleteStudentsDao.getInstance();
     private static GroupStudentsList groupList;
 
     @BeforeAll
