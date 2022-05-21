@@ -3,9 +3,6 @@ package org.it_academy.MK_JD2_90_22.json.controllers.json;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.it_academy.MK_JD2_90_22.json.dto.StudentIdDto;
-import org.it_academy.MK_JD2_90_22.json.services.StudentService;
-import org.it_academy.MK_JD2_90_22.json.services.api.ICRUDService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -16,7 +13,6 @@ import java.io.IOException;
 public class StudentServlet extends HttpServlet {
 
     private ObjectMapper mapper;
-    private static final ICRUDService<StudentIdDto> service = StudentService.getInstance();
 
     public StudentServlet() {
         this.mapper = new ObjectMapper()

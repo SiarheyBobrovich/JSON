@@ -1,4 +1,4 @@
-package org.it_academy.MK_JD2_90_22.json.dto;
+package org.it_academy.MK_JD2_90_22.json.dto.student;
 
 import java.io.Serializable;
 
@@ -9,12 +9,12 @@ import java.io.Serializable;
  * 	1.5 признак участия в олимпиадах (bool).
  */
 
-public class StudentIdDto implements Serializable {
+public class StudentId implements Serializable {
     private static final long serialVersionUID = 2L;
 
-    private long id;
+    private final long id;
 
-    public StudentIdDto(long id) {
+    public StudentId(long id) {
         this.id = id;
     }
 
