@@ -1,14 +1,15 @@
 package org.it_academy.MK_JD2_90_22.json.dao;
 
-import org.it_academy.MK_JD2_90_22.json.dao.api.ICDController;
-import org.it_academy.MK_JD2_90_22.json.dto.GroupStudentsList;
-import org.it_academy.MK_JD2_90_22.json.dto.StudentIdDto;
+import org.it_academy.MK_JD2_90_22.json.dao.api.ICDDao;
+import org.it_academy.MK_JD2_90_22.json.dao.api.IDao;
+import org.it_academy.MK_JD2_90_22.json.dto.group_student.GroupStudentsList;
+import org.it_academy.MK_JD2_90_22.json.dto.student.StudentId;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 
-public class GroupSaveDeleteStudentsDao implements ICDController<GroupStudentsList> {
+public class GroupSaveDeleteStudentsDao implements IDao, ICDDao {
 
     private static final String INSERT_QUERY =
             "INSERT INTO " +
@@ -30,32 +31,33 @@ public class GroupSaveDeleteStudentsDao implements ICDController<GroupStudentsLi
 
     @Override
     public void save(GroupStudentsList groupStudentsList) {
-        String groupName = groupStudentsList.getGroupName();
-        try(Connection connection = DataSourceFactory.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(INSERT_QUERY)) {
-            for (StudentIdDto studentIdDto : groupStudentsList.getStudentsList()) {
-                preparedStatement.setString(1, groupName);
-                preparedStatement.setLong(2, studentIdDto.getId());
-                preparedStatement.execute();
-            }
+        for (Map.Entry<String, List<StudentId>> stringListEntry : groupStudentsList) {
+            String groupName = stringListEntry.getKey();
 
-        }catch (SQLException e) {
-            throw new RuntimeException("Студента или группы не существует", e);
+            for (StudentId studentId : stringListEntry.getValue()) {
+                try {
+                    execute(INSERT_QUERY, groupName, studentId.getId());
+                }catch (SQLException e) {
+                    //поменять
+                    throw new RuntimeException();
+                }
+            }
         }
     }
 
     @Override
     public void delete(GroupStudentsList groupStudentsList) {
-        try(Connection connection = DataSourceFactory.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(DELETE_QUERY)) {
+        for (Map.Entry<String, List<StudentId>> stringListEntry : groupStudentsList) {
+            String groupName = stringListEntry.getKey();
 
-            for (StudentIdDto studentIdDto : groupStudentsList.getStudentsList()) {
-                preparedStatement.setLong(1, studentIdDto.getId());
-                preparedStatement.execute();
+            for (StudentId studentId : stringListEntry.getValue()) {
+                try {
+                    execute(DELETE_QUERY, studentId.getId());
+                }catch (SQLException e) {
+                    //поменять
+                    throw new RuntimeException();
+                }
             }
-
-        }catch (SQLException e) {
-            throw new RuntimeException("Студента или группы не существует", e);
         }
     }
 
