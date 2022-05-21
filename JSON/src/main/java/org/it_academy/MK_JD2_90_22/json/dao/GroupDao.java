@@ -1,13 +1,11 @@
 package org.it_academy.MK_JD2_90_22.json.dao;
 
-import org.it_academy.MK_JD2_90_22.json.dao.api.CRUD.IRC;
-import org.it_academy.MK_JD2_90_22.json.dao.api.CRUD.IUC;
-import org.it_academy.MK_JD2_90_22.json.dao.api.ICDController;
+import org.it_academy.MK_JD2_90_22.json.dao.api.ICRUDGroupDao;
 import org.it_academy.MK_JD2_90_22.json.dao.api.IDao;
 import org.it_academy.MK_JD2_90_22.json.dao.entity.Group;
-import org.it_academy.MK_JD2_90_22.json.dto.GroupName;
-import org.it_academy.MK_JD2_90_22.json.dto.GroupRefresh;
-import org.it_academy.MK_JD2_90_22.json.exceptions.DaoException;
+import org.it_academy.MK_JD2_90_22.json.dto.group.GroupName;
+import org.it_academy.MK_JD2_90_22.json.dto.group.GroupRefresh;
+import org.it_academy.MK_JD2_90_22.json.exceptions.GroupDaoException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,7 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GroupDao implements IDao, ICDController<GroupName>, IUC<GroupRefresh>, IRC<Group> {
+public class GroupDao implements IDao, ICRUDGroupDao {
 
     private static final String INSERT_QUERY =
             "INSERT INTO " +
@@ -56,7 +54,7 @@ public class GroupDao implements IDao, ICDController<GroupName>, IUC<GroupRefres
             "WHERE " +
                 "name = ?;";
 
-    private static GroupDao instance = new GroupDao();
+    private static final GroupDao instance = new GroupDao();
 
     private GroupDao() {
     }
@@ -83,7 +81,7 @@ public class GroupDao implements IDao, ICDController<GroupName>, IUC<GroupRefres
             }
 
         }catch (SQLException e) {
-            throw new DaoException("Обратитесь в службу поддержки!", e);
+            throw new GroupDaoException("Обратитесь в службу поддержки!", e);
         }
     }
 

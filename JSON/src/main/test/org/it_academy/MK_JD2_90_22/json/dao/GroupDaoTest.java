@@ -1,8 +1,9 @@
 package org.it_academy.MK_JD2_90_22.json.dao;
 
 import org.it_academy.MK_JD2_90_22.json.dao.entity.Group;
-import org.it_academy.MK_JD2_90_22.json.dto.GroupName;
-import org.it_academy.MK_JD2_90_22.json.dto.GroupRefresh;
+
+import org.it_academy.MK_JD2_90_22.json.dto.group.GroupName;
+import org.it_academy.MK_JD2_90_22.json.dto.group.GroupRefresh;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
