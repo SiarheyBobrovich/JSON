@@ -2,6 +2,7 @@ package org.it_academy.MK_JD2_90_22.json.dao;
 
 import org.it_academy.MK_JD2_90_22.json.dao.api.IDao;
 import org.it_academy.MK_JD2_90_22.json.dao.api.IValidationDao;
+import org.it_academy.MK_JD2_90_22.json.exceptions.dao.GroupDaoException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,18 +10,21 @@ import java.sql.SQLException;
 
 public class ValidationDao implements IValidationDao {
 
+    private static final String DB_NAME = "courses.groups";
+
     private static final ValidationDao instance = new ValidationDao();
 
-    private ValidationDao() {
-    }
 
     private static final String SELECT_FOR_NAME_QUERY =
             "SELECT " +
                     "id, name " +
                     "FROM " +
-                    "courses.groups " +
+                     DB_NAME + " " +
                     "WHERE name = ?;"
             ;
+
+    private ValidationDao() {
+    }
 
 
 
@@ -34,7 +38,7 @@ public class ValidationDao implements IValidationDao {
 
         }catch (SQLException e) {
             //Изменить
-            throw new RuntimeException();
+            throw new GroupDaoException("Сбой при работе с базой " + DB_NAME);
         }
     }
 
