@@ -1,7 +1,10 @@
 package org.it_academy.MK_JD2_90_22.json.dao;
 
+import org.it_academy.MK_JD2_90_22.json.dao.entity.Student;
+import org.it_academy.MK_JD2_90_22.json.dao.entity.StudentsInGroup;
 import org.it_academy.MK_JD2_90_22.json.dto.group_student.GroupStudentsList;
 import org.it_academy.MK_JD2_90_22.json.dto.student.StudentId;
+import org.it_academy.MK_JD2_90_22.json.exceptions.dao.GroupSaveDeleteStudentsDaoException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -32,5 +35,23 @@ class GroupSaveDeleteStudentsDaoTest {
         Assertions.assertThrows(RuntimeException.class, () -> instance.save(groupList));
 
         Assertions.assertDoesNotThrow(() -> instance.delete(groupList));
+    }
+
+    @Test
+    void getAll() {
+        Assertions.assertDoesNotThrow(() -> instance.getAll());
+    }
+
+    @Test
+    void get() {
+        long id = 2;
+        Assertions.assertDoesNotThrow(() -> instance.get(id));
+//
+//        StudentsInGroup studentsInGroup = instance.get(id);
+//        System.out.println(studentsInGroup.getGroup());
+//        for (Student student : studentsInGroup.getStudents()) {
+//            System.out.println("\t" + student);
+//        }
+
     }
 }

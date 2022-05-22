@@ -2,10 +2,14 @@ package org.it_academy.MK_JD2_90_22.json.services;
 
 import org.it_academy.MK_JD2_90_22.json.dao.GroupSaveDeleteStudentsDao;
 import org.it_academy.MK_JD2_90_22.json.dao.ValidationDao;
-import org.it_academy.MK_JD2_90_22.json.dao.api.ICDDao;
+import org.it_academy.MK_JD2_90_22.json.dao.api.ICRDDao;
 import org.it_academy.MK_JD2_90_22.json.dao.api.IValidationDao;
+import org.it_academy.MK_JD2_90_22.json.dao.entity.StudentsInGroup;
 import org.it_academy.MK_JD2_90_22.json.dto.group_student.GroupStudentsList;
 import org.it_academy.MK_JD2_90_22.json.dto.student.StudentId;
+import org.it_academy.MK_JD2_90_22.json.exceptions.service.GroupSaveDeleteStudentNullException;
+import org.it_academy.MK_JD2_90_22.json.exceptions.service.GroupSaveDeleteStudentsIllegalArgumentException;
+import org.it_academy.MK_JD2_90_22.json.exceptions.service.GroupSaveDeleteStudentsIllegalIDException;
 import org.it_academy.MK_JD2_90_22.json.services.api.ICDService;
 
 import java.util.List;
@@ -14,7 +18,7 @@ import java.util.Map;
 public class GroupSaveDeleteStudentsService implements ICDService {
 
     private static final IValidationDao validator = ValidationDao.getInstance();
-    private static final ICDDao dao =
+    private static final ICRDDao dao =
             GroupSaveDeleteStudentsDao.getInstance();
     private static final GroupSaveDeleteStudentsService instance;
 
@@ -28,7 +32,7 @@ public class GroupSaveDeleteStudentsService implements ICDService {
     @Override
     public void save(GroupStudentsList list) {
         if (list == null) {
-            throw new IllegalArgumentException("Данные не переданы");
+            throw new GroupSaveDeleteStudentNullException();
         }
 
         check(list);
@@ -37,11 +41,25 @@ public class GroupSaveDeleteStudentsService implements ICDService {
     }
 
     @Override
+    public List<StudentsInGroup> getAll() {
+        return dao.getAll();
+    }
+
+    @Override
+    public StudentsInGroup get(long id) {
+        if (id < 1) {
+            throw new GroupSaveDeleteStudentsIllegalIDException();
+        }
+        return dao.get(id);
+    }
+
+    @Override
     public void delete(GroupStudentsList list) {
 
         if (list == null) {
-            throw new IllegalArgumentException("Данные не переданы");
+            throw new GroupSaveDeleteStudentNullException();
         }
+
         check(list);
 
         dao.delete(list);
@@ -55,18 +73,15 @@ public class GroupSaveDeleteStudentsService implements ICDService {
         for (Map.Entry<String, List<StudentId>> entry : list) {
             String groupName = entry.getKey();
 
-            if (!validator.isExistGroup(groupName)) {
-                //Изменить
-                throw new RuntimeException("Такая группа уже существует");
+            if (validator.isExistGroup(groupName)) {
+                throw new GroupSaveDeleteStudentsIllegalArgumentException("Такая группа уже существует");
             }
 
             for (StudentId studentId : entry.getValue()) {
-                if (!validator.isExistStudent(studentId.getId())) {
-                    //Изменить
-                    throw new RuntimeException("Такой студент уже существует");
+                if (validator.isExistStudent(studentId.getId())) {
+                    throw new GroupSaveDeleteStudentsIllegalArgumentException("Такой студент уже существует");
                 }
             }
         }
     }
-
 }
