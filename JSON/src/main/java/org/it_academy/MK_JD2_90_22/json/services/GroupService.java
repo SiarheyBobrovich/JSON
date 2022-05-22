@@ -6,6 +6,9 @@ import org.it_academy.MK_JD2_90_22.json.dao.api.IValidationDao;
 import org.it_academy.MK_JD2_90_22.json.dao.entity.Group;
 import org.it_academy.MK_JD2_90_22.json.dto.group.GroupName;
 import org.it_academy.MK_JD2_90_22.json.dto.group.GroupRefresh;
+import org.it_academy.MK_JD2_90_22.json.exceptions.service.GroupIllegalNameException;
+import org.it_academy.MK_JD2_90_22.json.exceptions.service.GroupNullPointerException;
+import org.it_academy.MK_JD2_90_22.json.exceptions.service.StudentsIllegalIdException;
 import org.it_academy.MK_JD2_90_22.json.services.api.ICRUDGroupService;
 
 import java.util.List;
@@ -30,7 +33,7 @@ public class GroupService implements ICRUDGroupService {
         isNull(groupName);
 
         if (validator.isExistGroup(groupName.getName())) {
-            new IllegalArgumentException("Такая группа уже существует");
+            new GroupIllegalNameException();
         }
 
         dao.save(groupName);
@@ -51,7 +54,7 @@ public class GroupService implements ICRUDGroupService {
     @Override
     public Group get(long id) {
         if (id <= 0) {
-            throw new IllegalArgumentException("id меньше нуля");
+            throw new StudentsIllegalIdException();
         }
 
         return dao.get(id);
@@ -67,7 +70,7 @@ public class GroupService implements ICRUDGroupService {
     private void isNull(Object o) {
 
         if (Objects.isNull(o)){
-            new IllegalArgumentException("Данные не переданы");
+            new GroupNullPointerException();
         }
     }
 

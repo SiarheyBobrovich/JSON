@@ -5,7 +5,7 @@ import org.it_academy.MK_JD2_90_22.json.dao.api.IDao;
 import org.it_academy.MK_JD2_90_22.json.dao.entity.Group;
 import org.it_academy.MK_JD2_90_22.json.dto.group.GroupName;
 import org.it_academy.MK_JD2_90_22.json.dto.group.GroupRefresh;
-import org.it_academy.MK_JD2_90_22.json.exceptions.GroupDaoException;
+import org.it_academy.MK_JD2_90_22.json.exceptions.dao.GroupDaoException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,32 +16,35 @@ import java.util.List;
 
 public class GroupDao implements IDao, ICRUDGroupDao {
 
+    private static final String DB_NAME = "courses.groups";
+
     private static final String INSERT_QUERY =
             "INSERT INTO " +
-                "courses.groups\n" +
+                DB_NAME + "\n" +
                 "\t(name)\n" +
-                "\tVALUES " +
-                    "(?);"
+            "\tVALUES " +
+                "(?);"
             ;
 
     private static final String SELECT_QUERY =
             "SELECT " +
                 "id, name " +
             "FROM " +
-                "courses.groups;"
+                DB_NAME + ";"
             ;
 
     private static final String SELECT_WHERE_QUERY =
             "SELECT " +
-                    "id, name " +
-                    "FROM " +
-                    "courses.groups " +
-                    "WHERE id = ?;"
+                "id, name " +
+            "FROM " +
+                DB_NAME + " " +
+            "WHERE " +
+                "id = ?;"
             ;
 
     private static final String UPDATE_QUERY =
             "UPDATE " +
-                "courses.groups " +
+                DB_NAME + " " +
                 "SET " +
                     "name = ? " +
                 "WHERE " +
@@ -50,7 +53,7 @@ public class GroupDao implements IDao, ICRUDGroupDao {
 
     private static final String DELETE_QUERY =
             "DELETE FROM " +
-                "courses.groups " +
+                DB_NAME + " " +
             "WHERE " +
                 "name = ?;";
 
@@ -66,7 +69,7 @@ public class GroupDao implements IDao, ICRUDGroupDao {
             execute(INSERT_QUERY, groupRefresh.getName());
 
         }catch (SQLException e) {
-            throw new IllegalArgumentException("Такая группа уже существует", e);
+            throw new GroupDaoException("Сбой при работе с базой " + DB_NAME, e);
         }
     }
 
@@ -81,7 +84,7 @@ public class GroupDao implements IDao, ICRUDGroupDao {
             }
 
         }catch (SQLException e) {
-            throw new GroupDaoException("Обратитесь в службу поддержки!", e);
+            throw new GroupDaoException("Сбой при работе с базой " + DB_NAME, e);
         }
     }
 
@@ -98,7 +101,7 @@ public class GroupDao implements IDao, ICRUDGroupDao {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new GroupDaoException("Сбой при работе с базой " + DB_NAME, e);
         }
     }
 
@@ -108,7 +111,7 @@ public class GroupDao implements IDao, ICRUDGroupDao {
             execute(UPDATE_QUERY, groupRefresh.getNewName(), groupRefresh.getOldName());
 
         }catch (SQLException e) {
-            throw new IllegalArgumentException("Такая группа уже существует", e);
+            throw new GroupDaoException("Сбой при работе с базой " + DB_NAME, e);
         }
     }
 
@@ -117,7 +120,7 @@ public class GroupDao implements IDao, ICRUDGroupDao {
         try {
             execute(DELETE_QUERY, groupRefresh.getName());
         }catch (SQLException e) {
-            throw new RuntimeException("Обратитесь в службу поддержки!", e);
+            throw new GroupDaoException("Сбой при работе с базой " + DB_NAME, e);
         }
     }
 
