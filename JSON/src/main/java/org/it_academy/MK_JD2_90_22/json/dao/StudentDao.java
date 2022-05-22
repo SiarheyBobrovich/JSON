@@ -5,7 +5,7 @@ import org.it_academy.MK_JD2_90_22.json.dao.api.IDao;
 import org.it_academy.MK_JD2_90_22.json.dao.entity.Student;
 import org.it_academy.MK_JD2_90_22.json.dto.student.StudentDto;
 import org.it_academy.MK_JD2_90_22.json.dto.student.StudentId;
-import org.it_academy.MK_JD2_90_22.json.exceptions.StudentDaoException;
+import org.it_academy.MK_JD2_90_22.json.exceptions.dao.StudentDaoException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,46 +16,49 @@ import java.util.List;
 
 public class StudentDao implements IDao, ICRUDStudentDao {
 
+    private static final String DB_NAME = "courses.students";
+
     private static final String INSERT_QUERY =
             "INSERT INTO " +
-                    "courses.students " +
-                    "(name, age, score, olimpic_gamer) " +
-                    " VALUES " +
-                    "(?, ?, ?, ?);"
+                DB_NAME + " " +
+                "(name, age, score, olimpic_gamer) " +
+            "VALUES " +
+                "(?, ?, ?, ?);"
             ;
 
     private static final String SELECT_QUERY =
             "SELECT " +
-                    "id, name, age, score, olimpic_gamer " +
-                    "FROM " +
-                    "courses.students;"
+                "id, name, age, score, olimpic_gamer " +
+            "FROM " +
+                DB_NAME + ";"
             ;
 
     //Сформировать запрос
     private static final String SELECT_WHERE_QUERY =
             "SELECT " +
-                    "id, name, age, score, olimpic_gamer " +
-                    "FROM " +
-                    "courses.students " +
-                    "WHERE id = ?;"
+                "id, name, age, score, olimpic_gamer " +
+            "FROM " +
+                DB_NAME + " " +
+            "WHERE " +
+                "id = ?;"
             ;
 
 
     //Сформировать запрос
     private static final String UPDATE_QUERY =
             "UPDATE " +
-                    "courses.students " +
-                    "SET " +
+                DB_NAME + " " +
+            "SET " +
                     "name = ? " +
-                    "WHERE " +
+            "WHERE " +
                     "id = ?;"
             ;
 
     private static final String DELETE_QUERY =
             "DELETE FROM " +
-                    "courses.students " +
-                    "WHERE " +
-                    "id = ?;";
+                DB_NAME + " " +
+            "WHERE " +
+                "id = ?;";
 
     private static StudentDao instance = new StudentDao();
 
@@ -72,7 +75,8 @@ public class StudentDao implements IDao, ICRUDStudentDao {
             }
 
         }catch (SQLException e) {
-            throw new StudentDaoException(e.getLocalizedMessage(), e);
+            throw new StudentDaoException(
+                    "Сбой при работе с базой " + DB_NAME, e);
         }
     }
 
@@ -80,6 +84,7 @@ public class StudentDao implements IDao, ICRUDStudentDao {
     public Student get(long id) {
         try(Connection connection = DataSourceFactory.getInstance().getConnection();
             PreparedStatement preparedStatement =  connection.prepareStatement(SELECT_WHERE_QUERY)) {
+
             preparedStatement.setLong(1, id);
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -87,7 +92,8 @@ public class StudentDao implements IDao, ICRUDStudentDao {
             }
 
         }catch (SQLException e) {
-            throw new StudentDaoException(e.getLocalizedMessage(), e);
+            throw new StudentDaoException(
+                    "Сбой при работе с базой " + DB_NAME, e);
         }
 
     }
@@ -103,7 +109,8 @@ public class StudentDao implements IDao, ICRUDStudentDao {
             );
 
         }catch (SQLException e) {
-            throw new StudentDaoException(e.getLocalizedMessage(), e);
+            throw new StudentDaoException(
+                    "Сбой при работе с базой " + DB_NAME, e);
         }
     }
 
@@ -120,7 +127,8 @@ public class StudentDao implements IDao, ICRUDStudentDao {
             );
 
         }catch (SQLException e) {
-            throw new StudentDaoException(e.getLocalizedMessage(), e);
+            throw new StudentDaoException(
+                    "Сбой при работе с базой " + DB_NAME, e);
         }
     }
     @Override
@@ -131,7 +139,8 @@ public class StudentDao implements IDao, ICRUDStudentDao {
             );
 
         }catch (SQLException e) {
-            throw new StudentDaoException(e.getLocalizedMessage(), e);
+            throw new StudentDaoException(
+                    "Сбой при работе с базой " + DB_NAME, e);
         }
     }
 

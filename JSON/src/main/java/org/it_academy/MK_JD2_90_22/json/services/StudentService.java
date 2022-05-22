@@ -7,6 +7,8 @@ import org.it_academy.MK_JD2_90_22.json.dao.api.IValidationDao;
 import org.it_academy.MK_JD2_90_22.json.dao.entity.Student;
 import org.it_academy.MK_JD2_90_22.json.dto.student.StudentDto;
 import org.it_academy.MK_JD2_90_22.json.dto.student.StudentId;
+import org.it_academy.MK_JD2_90_22.json.exceptions.service.StudentsIllegalIdException;
+import org.it_academy.MK_JD2_90_22.json.exceptions.service.StudentNullPointerException;
 import org.it_academy.MK_JD2_90_22.json.services.api.ICRUDStudentsService;
 
 import java.util.List;
@@ -30,7 +32,7 @@ public class StudentService implements ICRUDStudentsService {
     public void save(StudentDto studentDto) {
         isNull(studentDto);
         if (validator.isExistStudent(studentDto.getId())) {
-            throw new IllegalArgumentException("Студент уже существует");
+            throw new StudentsIllegalIdException("Студент уже существует");
         }
 
         dao.save(studentDto);
@@ -51,7 +53,7 @@ public class StudentService implements ICRUDStudentsService {
     @Override
     public Student get(long id) {
         if (id < 1) {
-            throw new IllegalArgumentException("ID меньше нуля");
+            throw new StudentsIllegalIdException();
         }
 
         return dao.get(id);
@@ -67,13 +69,11 @@ public class StudentService implements ICRUDStudentsService {
     private void isNull(Object o) {
 
         if (Objects.isNull(o)){
-            new IllegalArgumentException("Данные не переданы");
+            throw new StudentNullPointerException();
         }
     }
 
     public static StudentService getInstance() {
         return instance;
     }
-
-
 }
