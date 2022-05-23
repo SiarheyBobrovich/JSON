@@ -1,6 +1,5 @@
 package org.it_academy.MK_JD2_90_22.json.dao;
 
-import org.it_academy.MK_JD2_90_22.json.dao.api.IDao;
 import org.it_academy.MK_JD2_90_22.json.dao.api.IValidationDao;
 import org.it_academy.MK_JD2_90_22.json.exceptions.dao.GroupDaoException;
 
@@ -14,7 +13,6 @@ public class ValidationDao implements IValidationDao {
 
     private static final ValidationDao instance = new ValidationDao();
 
-
     private static final String SELECT_FOR_NAME_QUERY =
             "SELECT " +
                     "id, name " +
@@ -26,18 +24,16 @@ public class ValidationDao implements IValidationDao {
     private ValidationDao() {
     }
 
-
-
     @Override
     public boolean isExistGroup(String groupName) {
         try (Connection connection = DataSourceFactory.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SELECT_FOR_NAME_QUERY)){
 
             statement.setString(1, groupName);
-            return statement.executeQuery().getRow() > 0;
+
+            return statement.executeQuery().next();
 
         }catch (SQLException e) {
-            //Изменить
             throw new GroupDaoException("Сбой при работе с базой " + DB_NAME);
         }
     }
