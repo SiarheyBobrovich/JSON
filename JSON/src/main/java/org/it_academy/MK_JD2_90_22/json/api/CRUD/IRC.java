@@ -10,6 +10,11 @@ public interface IRC<R> {
      */
     List<R> getAll();
 
+    /**
+     * Read a R-object
+     * @param id - R-object
+     * @return - R-object has been read
+     */
     R get(long id);
 
 }
