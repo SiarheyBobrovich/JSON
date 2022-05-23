@@ -31,9 +31,7 @@ public class GroupService implements ICRUDGroupService {
             throw new GroupIllegalNameException("Не введено название группы для сохранения");
         }
 
-        if (validator.isExistGroup(groupName.getName())) {
-            throw new GroupIllegalNameException();
-        }
+        dao.delete(groupName);
 
         dao.save(groupName);
     }
@@ -83,6 +81,10 @@ public class GroupService implements ICRUDGroupService {
 
         if (!validator.isExistGroup(oldName)) {
             throw new GroupIllegalNameException("Такой группы не существует");
+        }
+
+        if (validator.isExistGroup(newName)) {
+            throw new GroupIllegalNameException("Такая группа уже существует");
         }
 
         dao.update(groupRefresh);
