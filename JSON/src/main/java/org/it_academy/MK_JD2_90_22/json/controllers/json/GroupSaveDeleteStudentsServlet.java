@@ -9,6 +9,7 @@ import org.it_academy.MK_JD2_90_22.json.exceptions.dao.GroupSaveDeleteStudentsDa
 import org.it_academy.MK_JD2_90_22.json.exceptions.service.GroupSaveDeleteStudentNullException;
 import org.it_academy.MK_JD2_90_22.json.exceptions.service.GroupSaveDeleteStudentsIllegalArgumentException;
 import org.it_academy.MK_JD2_90_22.json.exceptions.service.GroupSaveDeleteStudentsIllegalIDException;
+import org.it_academy.MK_JD2_90_22.json.exceptions.service.StudentsIllegalIdException;
 import org.it_academy.MK_JD2_90_22.json.services.GroupSaveDeleteStudentsService;
 import org.it_academy.MK_JD2_90_22.json.services.api.ICDService;
 
@@ -58,6 +59,7 @@ public class GroupSaveDeleteStudentsServlet extends HttpServlet {
                 GroupSaveDeleteStudentsIllegalArgumentException |
                 GroupSaveDeleteStudentsIllegalIDException e) {
             writer.write(e.getMessage());
+
         }catch (GroupSaveDeleteStudentsDaoException e) {
             log(e.getMessage(), e.getCause());
             writer.write("В данный момент база данных не доступна");
@@ -66,41 +68,15 @@ public class GroupSaveDeleteStudentsServlet extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setCharacterEncoding("UTF-8");
-        resp.setContentType("text/html; charset=utf-8");
-
-        GroupStudentsList gList;
-
-        PrintWriter writer = resp.getWriter();
-
-        try {
-            gList = mapper.readValue(req.getInputStream(), GroupStudentsList.class);
-
-        }catch (JsonProcessingException e) {
-            writer.write(ERROR);
-            return;
-        }
-
-        try {
-            service.save(gList);
-
-        }catch (GroupSaveDeleteStudentNullException |
-                GroupSaveDeleteStudentsIllegalArgumentException |
-                GroupSaveDeleteStudentsIllegalIDException e) {
-            writer.write(e.getMessage());
-            return;
-
-        }catch (GroupSaveDeleteStudentsDaoException e) {
-            this.log(e.getMessage(), e.getCause());
-            writer.write("База данных не доступна, попробуйте позже");
-            return;
-        }
-
-        writer.write("Данные сохранены успешно!");
+        doPutDelete(req, resp);
     }
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doPutDelete(req, resp);
+    }
+
+    private void doPutDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setContentType("text/html; charset=utf-8");
 
@@ -110,26 +86,35 @@ public class GroupSaveDeleteStudentsServlet extends HttpServlet {
 
         try {
             gList = mapper.readValue(req.getInputStream(), GroupStudentsList.class);
+
         }catch (JsonProcessingException e) {
             writer.write(ERROR);
             return;
         }
 
         try {
-            service.delete(gList);
+            switch (req.getMethod()) {
+                case "PUT" :
+                    service.save(gList);
+
+                    writer.write("Данные сохранены успешно!");
+                    return;
+
+                case "DELETE" :
+                    service.delete(gList);
+
+                    writer.write("Данные удалены успешно!");
+                }
 
         }catch (GroupSaveDeleteStudentNullException |
                 GroupSaveDeleteStudentsIllegalArgumentException |
-                GroupSaveDeleteStudentsIllegalIDException e) {
+                GroupSaveDeleteStudentsIllegalIDException |
+                StudentsIllegalIdException e) {
             writer.write(e.getMessage());
-            return;
 
         }catch (GroupSaveDeleteStudentsDaoException e) {
             this.log(e.getMessage(), e.getCause());
             writer.write("База данных не доступна, попробуйте позже");
-            return;
         }
-
-        writer.write("Данные удалены успешно!");
     }
 }
