@@ -30,9 +30,10 @@ public class StudentService implements ICRUDStudentsService {
 
     @Override
     public void save(StudentDto studentDto) {
-        isNull(studentDto);
-        if (validator.isExistStudent(studentDto.getId())) {
-            throw new StudentsIllegalIdException("Студент уже существует");
+        if (studentDto.getName() == null ||
+            studentDto.getName().isEmpty() ||
+            studentDto.getAge() == 0) {
+            throw new StudentNullPointerException();
         }
 
         dao.save(studentDto);
@@ -40,7 +41,13 @@ public class StudentService implements ICRUDStudentsService {
 
     @Override
     public void delete(StudentId studentId) {
-        isNull(studentId);
+        if (studentId.getId() < 1) {
+            throw new StudentsIllegalIdException();
+        }
+
+        if (!validator.isExistStudent(studentId.getId())) {
+            throw new StudentsIllegalIdException("Такого студента не существует");
+        }
 
         dao.delete(studentId);
     }
@@ -61,7 +68,18 @@ public class StudentService implements ICRUDStudentsService {
 
     @Override
     public void update(StudentDto studentDto) {
-        isNull(studentDto);
+        if (studentDto.getName() == null ||
+                studentDto.getName().isEmpty() ||
+                studentDto.getAge() == 0) {
+            throw new StudentNullPointerException();
+        }
+        if (studentDto.getId() < 1) {
+            throw new StudentsIllegalIdException();
+        }
+
+        if (!validator.isExistStudent(studentDto.getId())) {
+            throw new StudentsIllegalIdException("Такого студента не существует");
+        }
 
         dao.update(studentDto);
     }

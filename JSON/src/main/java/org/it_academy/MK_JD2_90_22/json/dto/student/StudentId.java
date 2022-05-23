@@ -1,5 +1,9 @@
 package org.it_academy.MK_JD2_90_22.json.dto.student;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+
 import java.io.Serializable;
 
 /**
@@ -14,7 +18,8 @@ public class StudentId implements Serializable {
 
     private final long id;
 
-    public StudentId(long id) {
+    @JsonCreator
+    public StudentId(@JsonSetter(value = "id", nulls = Nulls.FAIL) long id) {
         this.id = id;
     }
 

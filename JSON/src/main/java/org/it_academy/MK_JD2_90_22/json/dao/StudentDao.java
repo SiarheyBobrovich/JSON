@@ -6,6 +6,7 @@ import org.it_academy.MK_JD2_90_22.json.dao.entity.Student;
 import org.it_academy.MK_JD2_90_22.json.dto.student.StudentDto;
 import org.it_academy.MK_JD2_90_22.json.dto.student.StudentId;
 import org.it_academy.MK_JD2_90_22.json.exceptions.dao.StudentDaoException;
+import org.it_academy.MK_JD2_90_22.json.exceptions.service.StudentsIllegalIdException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,15 +21,23 @@ public class StudentDao implements IDao, ICRUDStudentDao {
 
     private static final String INSERT_QUERY =
             "INSERT INTO " +
-                DB_NAME + " " +
-                "(name, age, score, olimpic_gamer) " +
+                DB_NAME + " (" +
+                "name, " +
+                "age, " +
+                "score, " +
+                "olympic_gamer" +
+                ") " +
             "VALUES " +
                 "(?, ?, ?, ?);"
             ;
 
     private static final String SELECT_QUERY =
             "SELECT " +
-                "id, name, age, score, olimpic_gamer " +
+                "id, " +
+                "name, " +
+                "age, " +
+                "score, " +
+                "olympic_gamer " +
             "FROM " +
                 DB_NAME + ";"
             ;
@@ -36,7 +45,11 @@ public class StudentDao implements IDao, ICRUDStudentDao {
     //Сформировать запрос
     private static final String SELECT_WHERE_QUERY =
             "SELECT " +
-                "id, name, age, score, olimpic_gamer " +
+                "id, " +
+                "name, " +
+                "age, " +
+                "score, " +
+                "olympic_gamer " +
             "FROM " +
                 DB_NAME + " " +
             "WHERE " +
@@ -49,9 +62,12 @@ public class StudentDao implements IDao, ICRUDStudentDao {
             "UPDATE " +
                 DB_NAME + " " +
             "SET " +
-                    "name = ? " +
+                "name = ?, " +
+                "age = ?, " +
+                "score = ?, " +
+                "olympic_gamer = ? " +
             "WHERE " +
-                    "id = ?;"
+                "id = ?;"
             ;
 
     private static final String DELETE_QUERY =
@@ -88,7 +104,13 @@ public class StudentDao implements IDao, ICRUDStudentDao {
             preparedStatement.setLong(1, id);
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                return map(resultSet).get(0);
+                List<Student> map = map(resultSet);
+
+                if (map.isEmpty()) {
+                    throw new StudentsIllegalIdException("Такого студента не существует");
+                }
+
+                return map.get(0);
             }
 
         }catch (SQLException e) {
@@ -119,11 +141,11 @@ public class StudentDao implements IDao, ICRUDStudentDao {
     public void update(StudentDto studentDto) {
         try {
             execute(UPDATE_QUERY,
-
                     studentDto.getName(),
                     studentDto.getAge(),
                     studentDto.getScore(),
-                    studentDto.isOlympicGamer()
+                    studentDto.isOlympicGamer(),
+                    studentDto.getId()
             );
 
         }catch (SQLException e) {
@@ -150,9 +172,10 @@ public class StudentDao implements IDao, ICRUDStudentDao {
         while (rs.next()) {
             Student student = new Student();
             student.setId(rs.getLong("id"));
+            student.setName(rs.getString("name"));
             student.setAge(rs.getInt("age"));
             student.setScore(rs.getDouble("score"));
-            student.setOlympicGamer(rs.getBoolean("olimpic_gamer"));
+            student.setOlympicGamer(rs.getBoolean("olympic_gamer"));
             students.add(student);
         }
 
