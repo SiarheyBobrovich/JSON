@@ -18,12 +18,12 @@ import java.util.Map;
 public class GroupSaveDeleteStudentsService implements ICDService {
 
     private static final IValidationDao validator = ValidationDao.getInstance();
-    private static final ICRDDao dao =
-            GroupSaveDeleteStudentsDao.getInstance();
+    private static final ICRDDao dao;
     private static final GroupSaveDeleteStudentsService instance;
 
     static {
         instance = new GroupSaveDeleteStudentsService();
+        dao = GroupSaveDeleteStudentsDao.getInstance();
     }
 
     private GroupSaveDeleteStudentsService() {
@@ -31,11 +31,7 @@ public class GroupSaveDeleteStudentsService implements ICDService {
 
     @Override
     public void save(GroupStudentsList list) {
-        if (list == null) {
-            throw new GroupSaveDeleteStudentNullException();
-        }
-
-        check(list);
+        delete(list);
 
         dao.save(list);
     }
@@ -55,33 +51,33 @@ public class GroupSaveDeleteStudentsService implements ICDService {
 
     @Override
     public void delete(GroupStudentsList list) {
-
-        if (list == null) {
-            throw new GroupSaveDeleteStudentNullException();
-        }
-
         check(list);
 
         dao.delete(list);
     }
 
-    public static GroupSaveDeleteStudentsService getInstance() {
-        return instance;
-    }
-
     private void check(GroupStudentsList list) {
+
         for (Map.Entry<String, List<StudentId>> entry : list) {
             String groupName = entry.getKey();
 
-            if (validator.isExistGroup(groupName)) {
-                throw new GroupSaveDeleteStudentsIllegalArgumentException("Такая группа уже существует");
+            if (groupName == null) {
+                throw new GroupSaveDeleteStudentNullException();
+            }
+
+            if (!validator.isExistGroup(groupName)) {
+                throw new GroupSaveDeleteStudentsIllegalArgumentException("Такой группы не существует");
             }
 
             for (StudentId studentId : entry.getValue()) {
-                if (validator.isExistStudent(studentId.getId())) {
-                    throw new GroupSaveDeleteStudentsIllegalArgumentException("Такой студент уже существует");
+                if (!validator.isExistStudent(studentId.getId())) {
+                    throw new GroupSaveDeleteStudentsIllegalArgumentException("Такого студента не существует");
                 }
             }
         }
+    }
+
+    public static GroupSaveDeleteStudentsService getInstance() {
+        return instance;
     }
 }

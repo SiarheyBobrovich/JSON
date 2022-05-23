@@ -5,7 +5,6 @@ import org.it_academy.MK_JD2_90_22.json.dao.api.IDao;
 import org.it_academy.MK_JD2_90_22.json.dao.entity.Group;
 import org.it_academy.MK_JD2_90_22.json.dao.entity.Student;
 import org.it_academy.MK_JD2_90_22.json.dao.entity.StudentsInGroup;
-import org.it_academy.MK_JD2_90_22.json.dto.group.GroupName;
 import org.it_academy.MK_JD2_90_22.json.dto.group_student.GroupStudentsList;
 import org.it_academy.MK_JD2_90_22.json.dto.student.StudentId;
 import org.it_academy.MK_JD2_90_22.json.exceptions.dao.GroupSaveDeleteStudentsDaoException;
@@ -21,14 +20,15 @@ import java.util.Map;
 public class GroupSaveDeleteStudentsDao implements IDao, ICRDDao {
 
 
-    private static final String DB_NAME = "courses.students";
+    private static final String DB_NAME = "courses.students_in_groups";
 
     private static final String INSERT_QUERY =
             "INSERT INTO " +
                 DB_NAME + "\n" +
-                "\t(groupe_name, student_id)\n" +
-                "\tVALUES " +
-                    "(?, ?);"
+                "\t(group_name, " +
+                "\tstudent_id)\n" +
+            "\tVALUES " +
+                "(?, ?);"
             ;
     private static final String DELETE_QUERY =
             "DELETE FROM " +
@@ -44,13 +44,19 @@ public class GroupSaveDeleteStudentsDao implements IDao, ICRDDao {
                 "\ts.name as student_name,\n" +
                 "\ts.age as student_age,\n" +
                 "\ts.score as student_score,\n" +
-                "\ts.olimpic_gamer as student_olimpic_gamer\n" +
-            "FROM courses.students_in_groupe as sg\n" +
-            "JOIN courses.groups as g ON\n" +
-                "\tsg.groupe_name = g.name\n" +
-            "JOIN courses.students as s ON\n" +
+                "\ts.olympic_gamer as student_olympic_gamer\n" +
+            "FROM\n" +
+                DB_NAME + " as sg\n" +
+            "JOIN\n" +
+                "\tcourses.groups as g " +
+            "ON\n" +
+                "\tsg.group_name = g.name\n" +
+            "JOIN\n" +
+                "\tcourses.students as s " +
+            "ON\n" +
                 "\tsg.student_id = s.id\n" +
-            "WHERE g.id = ?;";
+            "WHERE\n" +
+                "\tg.id = ?;";
 
     private static final String SELECT_ALL_GROUP =
             "SELECT\n" +
@@ -60,14 +66,20 @@ public class GroupSaveDeleteStudentsDao implements IDao, ICRDDao {
                 "\ts.name as student_name,\n" +
                 "\ts.age as student_age,\n" +
                 "\ts.score as student_score,\n" +
-                "\ts.olimpic_gamer as student_olimpic_gamer\n" +
-            "FROM courses.students_in_groupe as sg\n" +
-            "JOIN courses.groups as g ON\n" +
-                "\tsg.groupe_name = g.name\n" +
-            "JOIN courses.students as s ON\n" +
+                "\ts.olympic_gamer as student_olympic_gamer\n" +
+            "FROM\n" +
+                DB_NAME + " as sg\n" +
+            "JOIN\n" +
+                "\tcourses.groups as g " +
+            "ON\n" +
+                "\tsg.group_name = g.name\n" +
+            "JOIN\n" +
+                "\tcourses.students as s " +
+            "ON\n" +
                 "\tsg.student_id = s.id\n" +
             "ORDER BY \n" +
                 "\tg.id;";
+
     private static final GroupSaveDeleteStudentsDao instance = new GroupSaveDeleteStudentsDao();
 
     private GroupSaveDeleteStudentsDao() {
@@ -125,7 +137,6 @@ public class GroupSaveDeleteStudentsDao implements IDao, ICRDDao {
     @Override
     public void delete(GroupStudentsList groupStudentsList) {
         for (Map.Entry<String, List<StudentId>> stringListEntry : groupStudentsList) {
-
             for (StudentId studentId : stringListEntry.getValue()) {
 
                 try {
@@ -151,7 +162,7 @@ public class GroupSaveDeleteStudentsDao implements IDao, ICRDDao {
             String studentName = rs.getString("student_name");
             int studentAge = rs.getInt("student_age");
             double studentScore = rs.getDouble("student_score");
-            boolean studentOlimpicGamer = rs.getBoolean("student_olimpic_gamer");
+            boolean studentOlimpicGamer = rs.getBoolean("student_olympic_gamer");
 
             if (group == null || groupCurrentId != group.getId()) {
 
