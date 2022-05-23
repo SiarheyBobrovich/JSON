@@ -6,6 +6,7 @@ import org.it_academy.MK_JD2_90_22.json.dao.entity.Group;
 import org.it_academy.MK_JD2_90_22.json.dto.group.GroupName;
 import org.it_academy.MK_JD2_90_22.json.dto.group.GroupRefresh;
 import org.it_academy.MK_JD2_90_22.json.exceptions.dao.GroupDaoException;
+import org.it_academy.MK_JD2_90_22.json.exceptions.service.GroupIllegalNameException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -97,7 +98,13 @@ public class GroupDao implements IDao, ICRUDGroupDao {
             preparedStatement.setLong(1, id);
 
             try (ResultSet rs = preparedStatement.executeQuery()) {
-                return map(rs).get(0);
+                List<Group> map = map(rs);
+
+                if (map.isEmpty()) {
+                    throw new GroupIllegalNameException("Такой группы не существует");
+                }
+
+                return map.get(0);
             }
 
         } catch (SQLException e) {
