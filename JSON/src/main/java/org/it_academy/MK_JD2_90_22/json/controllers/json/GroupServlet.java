@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import org.it_academy.MK_JD2_90_22.json.dto.group.GroupName;
 import org.it_academy.MK_JD2_90_22.json.dto.group.GroupRefresh;
 import org.it_academy.MK_JD2_90_22.json.exceptions.dao.GroupDaoException;
-import org.it_academy.MK_JD2_90_22.json.exceptions.service.GroupIllegalNameException;
+import org.it_academy.MK_JD2_90_22.json.exceptions.service.group.GroupIllegalStateException;
 import org.it_academy.MK_JD2_90_22.json.services.GroupService;
 import org.it_academy.MK_JD2_90_22.json.services.api.ICRUDGroupService;
 
@@ -51,7 +51,7 @@ public class GroupServlet extends HttpServlet {
             resp.getWriter().write("База данных на данный момент не доступна, обратитесь в тех. поддержку");
             return;
 
-        }catch (GroupIllegalNameException e) {
+        }catch (GroupIllegalStateException e) {
             resp.getWriter().write(e.getMessage());
             return;
         }
@@ -81,7 +81,7 @@ public class GroupServlet extends HttpServlet {
         try {
             service.update(groupRefresh);
 
-        }catch (GroupIllegalNameException e) {
+        }catch (GroupIllegalStateException e) {
             writer.write(e.getMessage());
             return;
 
@@ -115,7 +115,7 @@ public class GroupServlet extends HttpServlet {
         try {
             service.save(groupName);
 
-        }catch (GroupIllegalNameException e) {
+        }catch (GroupIllegalStateException e) {
             writer.write(e.getMessage());
             return;
 
@@ -149,7 +149,7 @@ public class GroupServlet extends HttpServlet {
         try {
             service.delete(groupName);
 
-        }catch (GroupIllegalNameException e) {
+        }catch (GroupIllegalStateException e) {
             writer.write(e.getMessage());
             return;
 
