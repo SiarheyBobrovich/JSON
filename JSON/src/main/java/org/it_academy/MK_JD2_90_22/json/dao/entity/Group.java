@@ -1,6 +1,7 @@
 package org.it_academy.MK_JD2_90_22.json.dao.entity;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Group implements Serializable {
 
@@ -23,6 +24,19 @@ public class Group implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Group)) return false;
+        Group group = (Group) o;
+        return id == group.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override

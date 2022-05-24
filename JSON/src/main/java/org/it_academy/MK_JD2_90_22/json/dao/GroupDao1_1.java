@@ -1,10 +1,10 @@
 package org.it_academy.MK_JD2_90_22.json.dao;
 
-import org.it_academy.MK_JD2_90_22.json.dao.api.ICRUDGroupDao;
+import org.it_academy.MK_JD2_90_22.json.dao.api.ICRUDGroupDao1_1;
 import org.it_academy.MK_JD2_90_22.json.dao.api.IDao;
 import org.it_academy.MK_JD2_90_22.json.dao.entity.Group;
-import org.it_academy.MK_JD2_90_22.json.dto.group.GroupName;
-import org.it_academy.MK_JD2_90_22.json.dto.group.GroupRefresh;
+import org.it_academy.MK_JD2_90_22.json.dto.group.api.IGroup;
+import org.it_academy.MK_JD2_90_22.json.dto.group.api.IGroupUpdate;
 import org.it_academy.MK_JD2_90_22.json.exceptions.dao.GroupDaoException;
 import org.it_academy.MK_JD2_90_22.json.exceptions.service.group.GroupIllegalStateException;
 
@@ -15,15 +15,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GroupDao implements IDao, ICRUDGroupDao {
+public class GroupDao1_1 implements IDao, ICRUDGroupDao1_1 {
 
-    private static final String DB_NAME = "courses.groups";
+    private final String ERROR = "Сбой при работе с базой";
 
     private static final String INSERT_QUERY =
             "INSERT INTO " +
-                DB_NAME + "\n" +
-                "\t(name)\n" +
-            "\tVALUES " +
+                "? " +
+                "(name) " +
+            "VALUES " +
                 "(?);"
             ;
 
@@ -31,67 +31,72 @@ public class GroupDao implements IDao, ICRUDGroupDao {
             "SELECT " +
                 "id, name " +
             "FROM " +
-                DB_NAME + ";"
+                "?;"
             ;
 
     private static final String SELECT_WHERE_QUERY =
             "SELECT " +
                 "id, name " +
             "FROM " +
-                DB_NAME + " " +
+                "? " +
             "WHERE " +
                 "id = ?;"
             ;
 
     private static final String UPDATE_QUERY =
             "UPDATE " +
-                DB_NAME + " " +
+                "? " +
                 "SET " +
                     "name = ? " +
                 "WHERE " +
-                    "name = ?;"
+                    "id = ?;"
             ;
 
     private static final String DELETE_QUERY =
             "DELETE FROM " +
-                DB_NAME + " " +
+                "? " +
             "WHERE " +
-                "name = ?;";
+                "id = ?;";
 
-    private static final GroupDao instance = new GroupDao();
+    private static final GroupDao1_1 instance = new GroupDao1_1();
 
-    private GroupDao() {
+    private GroupDao1_1() {
     }
 
     @Override
-    public void save(GroupName groupRefresh) {
+    public void save(IGroup group) {
 
         try {
-            execute(INSERT_QUERY, groupRefresh.getName());
+            execute(INSERT_QUERY, group.getDbName(), group.getName());
 
         }catch (SQLException e) {
-            throw new GroupDaoException("Сбой при работе с базой " + DB_NAME, e);
+            throw new GroupDaoException(ERROR + " " + group.getDbName(), e);
         }
     }
 
     @Override
     public List<Group> getAll() {
 
-        try(Connection connection = DataSourceFactory.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_QUERY)) {
+        try(Connection connection =
+                    DataSourceFactory.getInstance().getConnection();
+            PreparedStatement preparedStatement =
+                    connection.prepareStatement(SELECT_QUERY)) {
+
+            preparedStatement.setString(1, IGroup.DB_NAME);
 
             try(ResultSet rs = preparedStatement.executeQuery()) {
                 return map(rs);
             }
 
         }catch (SQLException e) {
-            throw new GroupDaoException("Сбой при работе с базой " + DB_NAME, e);
+            throw new GroupDaoException(ERROR + " " + IGroup.DB_NAME, e);
         }
     }
 
     @Override
     public Group get(long id) {
-        try(Connection connection = DataSourceFactory.getInstance().getConnection();
+        try(Connection connection =
+                    DataSourceFactory.getInstance().getConnection();
             PreparedStatement preparedStatement =
                     connection.prepareStatement(SELECT_WHERE_QUERY)) {
 
@@ -108,26 +113,27 @@ public class GroupDao implements IDao, ICRUDGroupDao {
             }
 
         } catch (SQLException e) {
-            throw new GroupDaoException("Сбой при работе с базой " + DB_NAME, e);
+            throw new GroupDaoException(ERROR + " " + IGroup.DB_NAME, e);
         }
     }
 
     @Override
-    public void update(GroupRefresh groupRefresh) {
+    public void update(IGroup group) {
         try {
-            execute(UPDATE_QUERY, groupRefresh.getNewName(), groupRefresh.getOldName());
+            execute(UPDATE_QUERY, group.getDbName(), group.getName(), group.getId());
 
         }catch (SQLException e) {
-            throw new GroupDaoException("Сбой при работе с базой " + DB_NAME, e);
+            throw new GroupDaoException(ERROR + " " + IGroup.DB_NAME, e);
         }
     }
 
     @Override
-    public void delete(GroupName groupRefresh) {
+    public void delete(IGroup group) {
         try {
-            execute(DELETE_QUERY, groupRefresh.getName());
+            execute(DELETE_QUERY, group.getDbName(), group.getId());
+
         }catch (SQLException e) {
-            throw new GroupDaoException("Сбой при работе с базой " + DB_NAME, e);
+            throw new GroupDaoException(ERROR + " " + IGroup.DB_NAME, e);
         }
     }
 
@@ -144,7 +150,7 @@ public class GroupDao implements IDao, ICRUDGroupDao {
         return groups;
     }
 
-    public static GroupDao getInstance() {
+    public static GroupDao1_1 getInstance() {
         return instance;
     }
 }

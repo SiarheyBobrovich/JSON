@@ -6,7 +6,7 @@ import org.it_academy.MK_JD2_90_22.json.dao.api.IValidationDao;
 import org.it_academy.MK_JD2_90_22.json.dao.entity.Group;
 import org.it_academy.MK_JD2_90_22.json.dto.group.GroupName;
 import org.it_academy.MK_JD2_90_22.json.dto.group.GroupRefresh;
-import org.it_academy.MK_JD2_90_22.json.exceptions.service.GroupIllegalNameException;
+import org.it_academy.MK_JD2_90_22.json.exceptions.service.group.GroupIllegalStateException;
 import org.it_academy.MK_JD2_90_22.json.services.api.ICRUDGroupService;
 
 import java.util.List;
@@ -28,7 +28,7 @@ public class GroupService implements ICRUDGroupService {
     public void save(GroupName groupName) {
 
         if (groupName.getName().isEmpty()) {
-            throw new GroupIllegalNameException("Не введено название группы для сохранения");
+            throw new GroupIllegalStateException("Не введено название группы для сохранения");
         }
 
         if(validator.isExistGroup(groupName.getName())) {
@@ -42,11 +42,11 @@ public class GroupService implements ICRUDGroupService {
     public void delete(GroupName groupName) {
 
         if (groupName.getName().isEmpty()) {
-            throw new GroupIllegalNameException("Не введено название группы для удаления");
+            throw new GroupIllegalStateException("Не введено название группы для удаления");
         }
 
         if (!validator.isExistGroup(groupName.getName())) {
-            throw new GroupIllegalNameException("Такой группы не существует");
+            throw new GroupIllegalStateException("Такой группы не существует");
         }
 
         dao.delete(groupName);
@@ -61,7 +61,7 @@ public class GroupService implements ICRUDGroupService {
     public Group get(long id) {
 
         if (id <= 0) {
-            throw new GroupIllegalNameException("ID < 1");
+            throw new GroupIllegalStateException("ID < 1");
         }
 
         return dao.get(id);
@@ -74,19 +74,19 @@ public class GroupService implements ICRUDGroupService {
         String newName = groupRefresh.getNewName();
 
         if (oldName == null || oldName.isEmpty()) {
-            throw new GroupIllegalNameException("Не введено старое название группы");
+            throw new GroupIllegalStateException("Не введено старое название группы");
         }
 
         if (newName == null || newName.isEmpty()) {
-            throw new GroupIllegalNameException("Не введено новое название группы");
+            throw new GroupIllegalStateException("Не введено новое название группы");
         }
 
         if (!validator.isExistGroup(oldName)) {
-            throw new GroupIllegalNameException("Такой группы не существует");
+            throw new GroupIllegalStateException("Такой группы не существует");
         }
 
         if (validator.isExistGroup(newName)) {
-            throw new GroupIllegalNameException("Такая группа уже существует");
+            throw new GroupIllegalStateException("Такая группа уже существует");
         }
 
         dao.update(groupRefresh);
