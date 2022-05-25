@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
-import org.it_academy.MK_JD2_90_22.json.dto.group.api.IGroup;
+import org.it_academy.MK_JD2_90_22.json.dao.entity.api.IGroup;
 
 public class Group1_1 implements IGroup {
 
@@ -27,10 +27,5 @@ public class Group1_1 implements IGroup {
     @Override
     public String getName() {
         return name;
-    }
-
-    @Override
-    public String getDbName() {
-        return DB_NAME;
     }
 }

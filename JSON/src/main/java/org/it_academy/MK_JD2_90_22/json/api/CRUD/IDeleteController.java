@@ -1,6 +1,6 @@
 package org.it_academy.MK_JD2_90_22.json.api.CRUD;
 
-public interface IDC<D> {
+public interface IDeleteController<D> {
 
     /**
      * Delete a D-object

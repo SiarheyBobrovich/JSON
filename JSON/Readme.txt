@@ -10,29 +10,26 @@
 5. Написать контроллер принимающий список студентов на добавление и удаление из группы.
 
 
--- Тестовые данные
+Формат для групп:
+    GET: принимает параметры id=(1 - long.MAX_VALUE)
 
-INSERT INTO
-    courses.groups (name)
-    VALUES
-        ('MK-JD2-90-22'),
-        ('MK-JD2-90-23');
+    Поле id не обязательно
+    POST: {
+          "id": 1,
+          "name": "group-002"
+          }
 
-INSERT into
-    courses.students
-        (name, age, score, olimpic_gamer)
-    VALUES
-        ('Siarhey', 34, 2.2, true),
-        ('Pavel', 21, 5.34, true),
-        ('Mihael', 25, 9.9, false),
-        ('Valera', 120, null, true);
+    Все поля обязательны
+    PUT: {
+           "group": {
+             "id": 1,
+             "name": "group-003"
+           },
+           "newName": "group-001"
+         }
 
-
-	INSERT into
-    courses.students_in_groupe
-        (groupe_id, student_id)
-    VALUES
-		(1, 1),
-		(1, 3),
-        (3, 2),
-		(3, 4);
+    Поле нейм не обязательно
+    DELETE: {
+            "id": 1,
+            "name": "group-002"
+            }

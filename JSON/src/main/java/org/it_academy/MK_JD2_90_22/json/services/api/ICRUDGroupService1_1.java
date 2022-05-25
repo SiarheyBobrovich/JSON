@@ -2,14 +2,12 @@ package org.it_academy.MK_JD2_90_22.json.services.api;
 
 import org.it_academy.MK_JD2_90_22.json.api.CRUD.ICRUDController;
 import org.it_academy.MK_JD2_90_22.json.dao.entity.Group;
-import org.it_academy.MK_JD2_90_22.json.dto.group.GroupName;
-import org.it_academy.MK_JD2_90_22.json.dto.group.GroupRefresh;
-import org.it_academy.MK_JD2_90_22.json.dto.group.api.IGroup;
+import org.it_academy.MK_JD2_90_22.json.dao.entity.api.IGroup;
 import org.it_academy.MK_JD2_90_22.json.dto.group.api.IGroupUpdate;
 
 import java.util.List;
 
-public interface ICRUDGroupService1_1 extends ICRUDController<IGroup, Group, IGroup, IGroup>{
+public interface ICRUDGroupService1_1 extends ICRUDController<IGroup, Group, IGroupUpdate, IGroup>{
 
     @Override
     default void save(IGroup group) {
@@ -32,7 +30,7 @@ public interface ICRUDGroupService1_1 extends ICRUDController<IGroup, Group, IGr
     }
 
     @Override
-    default void update(IGroup groupUpdate) {
+    default void update(IGroupUpdate group) {
 
     }
 }

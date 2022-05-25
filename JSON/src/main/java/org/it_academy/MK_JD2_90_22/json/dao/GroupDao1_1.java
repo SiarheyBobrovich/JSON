@@ -3,66 +3,72 @@ package org.it_academy.MK_JD2_90_22.json.dao;
 import org.it_academy.MK_JD2_90_22.json.dao.api.ICRUDGroupDao1_1;
 import org.it_academy.MK_JD2_90_22.json.dao.api.IDao;
 import org.it_academy.MK_JD2_90_22.json.dao.entity.Group;
-import org.it_academy.MK_JD2_90_22.json.dto.group.api.IGroup;
+import org.it_academy.MK_JD2_90_22.json.dao.entity.api.IGroup;
+import org.it_academy.MK_JD2_90_22.json.dto.group.api.IGroupUpdate;
 import org.it_academy.MK_JD2_90_22.json.exceptions.dao.GroupDaoException;
 import org.it_academy.MK_JD2_90_22.json.exceptions.service.group.GroupIllegalStateException;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class GroupDao1_1 implements IDao, ICRUDGroupDao1_1 {
 
-    private final String ERROR = "Сбой при работе с базой";
+    private static final GroupDao1_1 instance = new GroupDao1_1();
 
-    private static final String INSERT_QUERY =
+    private final String error = "Сбой при работе с базой";
+    
+    private final String schemaTableName = "courses.groups";
+    private final String schemaCrossTableName = "courses.students_in_groups";
+
+    private final String insertQuery =
             "INSERT INTO " +
-                IGroup.DB_NAME + " " +
+                this.schemaTableName + " " +
                 "(name) " +
             "VALUES " +
                 "(?);"
             ;
 
-    private static final String SELECT_QUERY =
+    private final String selectQuery =
             "SELECT " +
                 "id, name " +
             "FROM " +
-                IGroup.DB_NAME + ";"
+                this.schemaTableName + ";"
             ;
 
-    private static final String SELECT_WHERE_QUERY =
+    private final String selectWhereQuery =
             "SELECT " +
                 "id, name " +
             "FROM " +
-                    IGroup.DB_NAME + " " +
+                    this.schemaTableName + " " +
             "WHERE " +
                 "id = ?;"
             ;
 
-    private static final String UPDATE_QUERY =
+    private final String updateQuery =
             "UPDATE " +
-                IGroup.DB_NAME + " " +
+                this.schemaTableName + " " +
             "SET " +
                 "name = ? " +
             "WHERE " +
                 "id = ?;"
             ;
 
-    private static final String DELETE_QUERY =
+    private final String deleteQuery =
             "DELETE FROM " +
-                IGroup.DB_NAME + " " +
+                this.schemaTableName + " " +
             "WHERE " +
-                "id = ?;";
+                "id = ?\n;";
 
-    private static final GroupDao1_1 instance = new GroupDao1_1();
+    private final String deleteCrossQuery =
+            "DELETE FROM " +
+                this.schemaCrossTableName + " " +
+            "WHERE " +
+                "group_id = ?;";
+
 
     private GroupDao1_1() {
     }
@@ -71,10 +77,10 @@ public class GroupDao1_1 implements IDao, ICRUDGroupDao1_1 {
     public void save(IGroup group) {
 
         try {
-            execute(INSERT_QUERY, group.getName());
+            execute(insertQuery, group.getName());
 
         }catch (SQLException e) {
-            throw new GroupDaoException(ERROR + " " + group.getDbName(), e);
+            throw new GroupDaoException(error + " " + this.schemaTableName, e);
         }
     }
 
@@ -84,14 +90,14 @@ public class GroupDao1_1 implements IDao, ICRUDGroupDao1_1 {
         try(Connection connection =
                     DataSourceFactory.getInstance().getConnection();
             PreparedStatement preparedStatement =
-                    connection.prepareStatement(SELECT_QUERY)) {
+                    connection.prepareStatement(selectQuery)) {
 
             try(ResultSet rs = preparedStatement.executeQuery()) {
                 return map(rs);
             }
 
         }catch (SQLException e) {
-            throw new GroupDaoException(ERROR + " " + IGroup.DB_NAME, e);
+            throw new GroupDaoException(error + " " + this.schemaTableName, e);
         }
     }
 
@@ -100,7 +106,7 @@ public class GroupDao1_1 implements IDao, ICRUDGroupDao1_1 {
         try(Connection connection =
                     DataSourceFactory.getInstance().getConnection();
             PreparedStatement preparedStatement =
-                    connection.prepareStatement(SELECT_WHERE_QUERY)) {
+                    connection.prepareStatement(selectWhereQuery)) {
 
             preparedStatement.setLong(1, id);
 
@@ -116,27 +122,27 @@ public class GroupDao1_1 implements IDao, ICRUDGroupDao1_1 {
             }
 
         } catch (SQLException e) {
-            throw new GroupDaoException(ERROR + " " + IGroup.DB_NAME, e);
+            throw new GroupDaoException(error + " " + this.schemaTableName, e);
         }
     }
 
     @Override
-    public void update(IGroup group) {
+    public void update(IGroupUpdate group) {
         try {
-            execute(UPDATE_QUERY, group.getName(), group.getId());
+            execute(updateQuery, group.getNewName(), group.getId());
 
         }catch (SQLException e) {
-            throw new GroupDaoException(ERROR + " " + IGroup.DB_NAME, e);
+            throw new GroupDaoException(error + " " + this.schemaTableName, e);
         }
     }
 
     @Override
     public void delete(IGroup group) {
         try {
-            execute(DELETE_QUERY, group.getId());
+            execute(deleteQuery + deleteCrossQuery, group.getId(), group.getId());
 
         }catch (SQLException e) {
-            throw new GroupDaoException(ERROR + " " + IGroup.DB_NAME, e);
+            throw new GroupDaoException(error + " " + this.schemaTableName, e);
         }
     }
 

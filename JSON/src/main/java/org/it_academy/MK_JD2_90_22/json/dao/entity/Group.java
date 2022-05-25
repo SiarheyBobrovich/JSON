@@ -1,9 +1,11 @@
 package org.it_academy.MK_JD2_90_22.json.dao.entity;
 
+import org.it_academy.MK_JD2_90_22.json.dao.entity.api.IGroup;
+
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Group implements Serializable {
+public class Group implements Serializable, IGroup {
 
     private long id;
 

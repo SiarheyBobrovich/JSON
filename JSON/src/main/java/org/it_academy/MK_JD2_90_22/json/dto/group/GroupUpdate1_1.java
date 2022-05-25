@@ -1,40 +1,70 @@
 package org.it_academy.MK_JD2_90_22.json.dto.group;
 
 import com.fasterxml.jackson.annotation.*;
-import org.it_academy.MK_JD2_90_22.json.dto.group.api.IGroup;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import org.it_academy.MK_JD2_90_22.json.dao.entity.api.IGroup;
+import org.it_academy.MK_JD2_90_22.json.dto.group.api.IGroupUpdate;
 
-public class GroupUpdate1_1 implements IGroup {
+@JsonDeserialize(builder = GroupUpdate1_1.Builder.class)
+public class GroupUpdate1_1 implements IGroupUpdate {
 
-    /**
-     * A group's id which will be changing
-     */
-    private long id;
+    private final IGroup group;
 
-    /**
-     * New name for group
-     */
-    private String newName;
+    private final String newName;
 
-    @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-    public GroupUpdate1_1(@JsonProperty(value = "id", required = true) long id,
-                          @JsonAlias({"newName", "new_name"})
-                          @JsonProperty(value = "name", required = true) String newName) {
-        this.id = id;
+    public GroupUpdate1_1(IGroup group, String newName) {
+        this.group = group;
         this.newName = newName;
     }
 
     @Override
-    public String getDbName() {
-        return DB_NAME;
+    public IGroup getGroup() {
+        return group;
     }
 
+    @JsonIgnore
     @Override
     public long getId() {
-        return this.id;
+        return this.group.getId();
+    }
+
+    @JsonIgnore
+    @Override
+    public String getName() {
+        return this.group.getName();
     }
 
     @Override
-    public String getName() {
+    public String getNewName() {
         return this.newName;
+    }
+
+    public static Builder create() {
+        return new Builder();
+    }
+
+    @JsonPOJOBuilder(withPrefix = "set")
+    public static class Builder {
+
+        private IGroup group;
+
+        private String newName;
+        private Builder() {
+        }
+
+        public Builder setGroup(IGroup group) {
+            this.group = group;
+            return this;
+        }
+
+        public Builder setNewName(String newName) {
+            this.newName = newName;
+            return this;
+        }
+
+        public IGroupUpdate build() {
+            return new GroupUpdate1_1(group, newName);
+        }
     }
 }

@@ -6,8 +6,10 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import org.it_academy.MK_JD2_90_22.json.dao.entity.Group;
 import org.it_academy.MK_JD2_90_22.json.dto.group.Group1_1;
 import org.it_academy.MK_JD2_90_22.json.dto.group.GroupUpdate1_1;
-import org.it_academy.MK_JD2_90_22.json.dto.group.api.IGroup;
+import org.it_academy.MK_JD2_90_22.json.dao.entity.api.IGroup;
+import org.it_academy.MK_JD2_90_22.json.dto.group.api.IGroupUpdate;
 import org.it_academy.MK_JD2_90_22.json.exceptions.dao.GroupDaoException;
+import org.it_academy.MK_JD2_90_22.json.exceptions.service.group.GroupIllegalArgumentException;
 import org.it_academy.MK_JD2_90_22.json.exceptions.service.group.GroupIllegalStateException;
 import org.it_academy.MK_JD2_90_22.json.services.GroupService1_1;
 import org.it_academy.MK_JD2_90_22.json.services.api.ICRUDGroupService1_1;
@@ -21,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -47,14 +48,16 @@ public class GroupServlet1_1 extends HttpServlet {
         List<Group> groups;
 
         try {
-            if (Objects.isNull(id) || !id.matches("\\d++")) {
-                groups = service.getAll();
+
+            try {
+                long l = Long.parseLong(id);
+                groups = new ArrayList<>(1);
+                groups.add(service.get(Long.parseLong(id)));
 
                 write(resp, mapper.writeValueAsString(groups));
 
-            } else {
-                groups = new ArrayList<>(1);
-                groups.add(service.get(Long.parseLong(id)));
+            }catch (NumberFormatException e) {
+                groups = service.getAll();
 
                 write(resp, mapper.writeValueAsString(groups));
             }
@@ -74,68 +77,7 @@ public class GroupServlet1_1 extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        setEncodingType(req, resp);
-//
-//        IGroup group;
-//
-//        PrintWriter writer = resp.getWriter();
-//        ServletInputStream inputStream = req.getInputStream();
-//
-//        try {
-//            group = mapper.readValue(inputStream, Group1_1.class);
-//
-//        }catch (JsonProcessingException e) {
-//            writer.write("Не верно переданные данные");
-//            return;
-//        }
-//
-//        try {
-//            service.save(group);
-//
-//        }catch (GroupIllegalStateException e) {
-//            writer.write(e.getMessage());
-//            return;
-//
-//        }catch (GroupDaoException e) {
-//            this.log(e.getMessage(), e.getCause());
-//            writer.write(e.getMessage());
-//            return;
-//        }
 
-        if (doCUD(req, resp)) {
-            resp.getWriter().write("Данные обновлены успешно");
-        }
-    }
-
-    @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        setEncodingType(req, resp);
-//
-//        IGroup group;
-//
-//        ServletInputStream inputStream = req.getInputStream();
-//        PrintWriter writer = resp.getWriter();
-//
-//        try {
-//            group = mapper.readValue(inputStream, GroupUpdate1_1.class);
-//
-//        }catch (JsonProcessingException e) {
-//            writer.write("Не верно переданы данные");
-//            return;
-//        }
-//
-//        try {
-//            service.update(group);
-//
-//        }catch (GroupIllegalStateException e) {
-//            writer.write(e.getMessage());
-//            return;
-//
-//        }catch (GroupDaoException e) {
-//            this.log(e.getMessage(), e.getCause());
-//            writer.write(e.getMessage());
-//            return;
-//        }
 
         if (doCUD(req, resp)) {
             resp.getWriter().write("Данные добавлены успешно");
@@ -143,34 +85,17 @@ public class GroupServlet1_1 extends HttpServlet {
     }
 
     @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+
+        if (doCUD(req, resp)) {
+            resp.getWriter().write("Данные обновлены успешно");
+        }
+    }
+
+    @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        setEncodingType(req, resp);
-//
-//        IGroup group;
-//
-//        ServletInputStream inputStream = req.getInputStream();
-//        PrintWriter writer = resp.getWriter();
-//
-//        try {
-//            group = mapper.readValue(inputStream, Group1_1.class);
-//
-//        }catch (JsonProcessingException e) {
-//            writer.write("Не верно переданы данные");
-//            return;
-//        }
-//
-//        try {
-//            service.delete(group);
-//
-//        }catch (GroupIllegalStateException e) {
-//            writer.write(e.getMessage());
-//            return;
-//
-//        }catch (GroupDaoException e) {
-//            this.log(e.getMessage(), e.getCause());
-//            writer.write(e.getMessage());
-//            return;
-//        }
+
 
         if (doCUD(req, resp)) {
             resp.getWriter().write("Данные удалены успешно");
@@ -180,18 +105,18 @@ public class GroupServlet1_1 extends HttpServlet {
     private boolean doCUD(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         setEncodingType(req, resp);
 
-
         ServletInputStream inputStream = req.getInputStream();
         PrintWriter writer = resp.getWriter();
 
         IGroup group;
+        IGroupUpdate groupUpdate;
 
         try {
 
             switch (req.getMethod()) {
                 case "PUT":
-                    group = mapper.readValue(inputStream, GroupUpdate1_1.class);
-                    service.update(group);
+                    groupUpdate = mapper.readValue(inputStream, GroupUpdate1_1.class);
+                    service.update(groupUpdate);
                     break;
 
                 case "POST":
@@ -209,11 +134,11 @@ public class GroupServlet1_1 extends HttpServlet {
             writer.write("Не верно переданы данные");
             return false;
 
-        } catch (GroupIllegalStateException e) {
+        } catch (GroupIllegalStateException | GroupIllegalArgumentException e) {
             writer.write(e.getMessage());
             return false;
 
-        } catch (GroupDaoException e) {
+        } catch (GroupDaoException | IOException e) {
             this.log(e.getMessage(), e.getCause());
             writer.write(e.getMessage());
             return false;

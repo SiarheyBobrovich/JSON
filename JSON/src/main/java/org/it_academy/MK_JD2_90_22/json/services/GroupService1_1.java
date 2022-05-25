@@ -1,10 +1,10 @@
 package org.it_academy.MK_JD2_90_22.json.services;
 
 import org.it_academy.MK_JD2_90_22.json.dao.GroupDao1_1;
-import org.it_academy.MK_JD2_90_22.json.dao.ValidationDao;
-import org.it_academy.MK_JD2_90_22.json.dao.api.IValidationDao;
+import org.it_academy.MK_JD2_90_22.json.dao.ValidationDao1_1;
+import org.it_academy.MK_JD2_90_22.json.dao.api.IValidationDao1_1;
 import org.it_academy.MK_JD2_90_22.json.dao.entity.Group;
-import org.it_academy.MK_JD2_90_22.json.dto.group.api.IGroup;
+import org.it_academy.MK_JD2_90_22.json.dao.entity.api.IGroup;
 import org.it_academy.MK_JD2_90_22.json.dto.group.api.IGroupUpdate;
 import org.it_academy.MK_JD2_90_22.json.exceptions.service.group.GroupIllegalArgumentException;
 import org.it_academy.MK_JD2_90_22.json.exceptions.service.group.GroupIllegalStateException;
@@ -16,7 +16,7 @@ import java.util.Objects;
 public class GroupService1_1 implements ICRUDGroupService1_1 {
 
     private static final GroupService1_1 instance;
-    private static final IValidationDao validator = ValidationDao.getInstance();
+    private static final IValidationDao1_1 validator = ValidationDao1_1.getInstance();
     private static final GroupDao1_1 dao = GroupDao1_1.getInstance();
 
     static {
@@ -29,11 +29,15 @@ public class GroupService1_1 implements ICRUDGroupService1_1 {
     @Override
     public void save(IGroup group) {
 
+        if (group == null || group.getName() == null) {
+            throw new GroupIllegalArgumentException("Не верно переданные данные");
+        }
+
         if (group.getName().isEmpty()) {
             throw new GroupIllegalArgumentException("Не введено название группы для сохранения");
         }
 
-        if(validator.isExistGroup(group.getName())) {
+        if(validator.isExistGroup(group)) {
             throw new GroupIllegalStateException();
         }
 
@@ -45,10 +49,6 @@ public class GroupService1_1 implements ICRUDGroupService1_1 {
 
         if (group.getId() < 1) {
             throw new GroupIllegalArgumentException();
-        }
-
-        if (group.getName().isEmpty()) {
-            throw new GroupIllegalArgumentException("Не введено название группы для сохранения");
         }
 
         if (Objects.isNull(dao.get(group.getId()))) {
@@ -74,10 +74,13 @@ public class GroupService1_1 implements ICRUDGroupService1_1 {
     }
 
     @Override
-    public void update(IGroup group) {
+    public void update(IGroupUpdate group) {
+        if (group == null || group.getGroup() == null) {
+            throw new GroupIllegalArgumentException("Не верно переданные данные");
+        }
 
         long id = group.getId();
-        String newName = group.getName();
+        String newName = group.getNewName();
 
         if (id < 1) {
             throw new GroupIllegalArgumentException();
@@ -87,12 +90,13 @@ public class GroupService1_1 implements ICRUDGroupService1_1 {
             throw new GroupIllegalArgumentException("Не введено новое название группы");
         }
 
-        boolean isExist = dao.getAll().stream()
-                .anyMatch(
-                        g -> g.getName().equals(group.getName())
-                );
+        if (!validator.isExistGroup(group.getId())) {
+            throw new GroupIllegalStateException("Такой группы не существует");
+        }
 
-        if (!isExist) {
+        long existGroup = validator.isExistGroup(group);
+
+        if (existGroup > 0 && existGroup != group.getId()) {
             throw new GroupIllegalStateException("Такая группа уже существует");
         }
 

@@ -2,7 +2,7 @@ package org.it_academy.MK_JD2_90_22.json.api.CRUD;
 
 import java.util.List;
 
-public interface IRC<R> {
+public interface IReadController<R> {
 
     /**
      * Read all R-objects
