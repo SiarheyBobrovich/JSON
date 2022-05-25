@@ -94,9 +94,9 @@ public class GroupService1_1 implements ICRUDGroupService1_1 {
             throw new GroupIllegalStateException("Такой группы не существует");
         }
 
-        long existGroup = validator.isExistGroup(group);
+        long existGroupId = validator.isExistGroup(group);
 
-        if (existGroup > 0 && existGroup != group.getId()) {
+        if (existGroupId > 0 && existGroupId != group.getId()) {
             throw new GroupIllegalStateException("Такая группа уже существует");
         }
 
