@@ -31,7 +31,6 @@ public class GroupSaveDeleteStudentsService implements ICDService {
 
     @Override
     public void save(GroupStudentsList list) {
-        delete(list);
 
         dao.save(list);
     }

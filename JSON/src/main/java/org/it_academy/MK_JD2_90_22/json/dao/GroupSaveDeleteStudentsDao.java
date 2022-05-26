@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class GroupSaveDeleteStudentsDao implements IDao, ICRDDao {
 
@@ -25,7 +26,7 @@ public class GroupSaveDeleteStudentsDao implements IDao, ICRDDao {
     private static final String INSERT_QUERY =
             "INSERT INTO " +
                 DB_NAME + "\n" +
-                "\t(group_name, " +
+                "\t(group_id, " +
                 "\tstudent_id)\n" +
             "\tVALUES " +
                 "(?, ?);"
@@ -50,7 +51,7 @@ public class GroupSaveDeleteStudentsDao implements IDao, ICRDDao {
             "JOIN\n" +
                 "\tcourses.groups as g " +
             "ON\n" +
-                "\tsg.group_name = g.name\n" +
+                "\tsg.group_id = g.id\n" +
             "JOIN\n" +
                 "\tcourses.students as s " +
             "ON\n" +
@@ -72,7 +73,7 @@ public class GroupSaveDeleteStudentsDao implements IDao, ICRDDao {
             "JOIN\n" +
                 "\tcourses.groups as g " +
             "ON\n" +
-                "\tsg.group_name = g.name\n" +
+                "\tsg.group_id = g.id\n" +
             "JOIN\n" +
                 "\tcourses.students as s " +
             "ON\n" +
@@ -89,11 +90,16 @@ public class GroupSaveDeleteStudentsDao implements IDao, ICRDDao {
     public void save(GroupStudentsList groupStudentsList) {
         for (Map.Entry<String, List<StudentId>> stringListEntry : groupStudentsList) {
             String groupName = stringListEntry.getKey();
+            Group group = GroupDao.getInstance()
+                    .getAll()
+                    .stream()
+                    .filter((x) -> x.getName().equals(groupName))
+                    .collect(Collectors.toList()).get(0);
 
             for (StudentId studentId : stringListEntry.getValue()) {
 
                 try {
-                    execute(INSERT_QUERY, groupName, studentId.getId());
+                    execute(INSERT_QUERY, group.getId(), studentId.getId());
 
                 }catch (SQLException e) {
                     throw new GroupSaveDeleteStudentsDaoException(

@@ -31,7 +31,8 @@ public class GroupDao implements IDao, ICRUDGroupDao {
             "SELECT " +
                 "id, name " +
             "FROM " +
-                DB_NAME + ";"
+                DB_NAME + " " +
+            "ORDER BY id;"
             ;
 
     private static final String SELECT_WHERE_QUERY =
@@ -40,7 +41,8 @@ public class GroupDao implements IDao, ICRUDGroupDao {
             "FROM " +
                 DB_NAME + " " +
             "WHERE " +
-                "id = ?;"
+                "id = ?" +
+            "ORDER BY id;"
             ;
 
     private static final String UPDATE_QUERY =
