@@ -1,24 +1,25 @@
 package org.it_academy.MK_JD2_90_22.json2.group.dto;
 
-import org.it_academy.MK_JD2_90_22.json2.group.entity.Group;
-
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 public class GroupDto {
 
     private final long id;
-    private final String newName;
+    private final String name;
 
-    public GroupDto(long id, String newName) {
+    @JsonCreator
+    public GroupDto(@JsonSetter("id") long id,
+                    @JsonSetter("name") String name) {
         this.id = id;
-        this.newName = newName;
+        this.name = name;
     }
 
     public long getId() {
             return id;
         }
 
-    public String getNewName() {
-            return newName;
+    public String getName() {
+            return name;
         }
 }

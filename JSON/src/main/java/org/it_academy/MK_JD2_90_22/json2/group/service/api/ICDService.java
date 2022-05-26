@@ -1,10 +1,10 @@
-package org.it_academy.MK_JD2_90_22.json2.services.api;
+package org.it_academy.MK_JD2_90_22.json2.group.service.api;
 
-import org.it_academy.MK_JD2_90_22.json2.api.CRUD.IDeleteController;
-import org.it_academy.MK_JD2_90_22.json2.dto.group_student.GroupStudentsList;
+import org.it_academy.MK_JD2_90_22.json.dao.entity.StudentsInGroup;
+import org.it_academy.MK_JD2_90_22.json.dto.group_student.GroupStudentsList;
 import org.it_academy.MK_JD2_90_22.json2.api.CRUD.ICreateController;
+import org.it_academy.MK_JD2_90_22.json2.api.CRUD.IDeleteController;
 import org.it_academy.MK_JD2_90_22.json2.api.CRUD.IReadController;
-import org.it_academy.MK_JD2_90_22.json2.dao.entity.StudentsInGroup;
 
 public interface ICDService extends ICreateController<GroupStudentsList>, IReadController<StudentsInGroup>, IDeleteController<GroupStudentsList> {
 
@@ -21,5 +21,5 @@ public interface ICDService extends ICreateController<GroupStudentsList>, IReadC
      * @param list - List of GroupStudentsList which will be updating
      */
     @Override
-    void save(GroupStudentsList list);
+    long save(GroupStudentsList list);
 }

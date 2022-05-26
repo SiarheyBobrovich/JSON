@@ -2,11 +2,11 @@ package org.it_academy.MK_JD2_90_22.json2.group.dao.utils;
 
 public class QueryContainer {
 
-    private static final String DB_NAME = "couses.groups";
-    private static final String CROSS_DB_NAME = "schemaCrossTableName";
+    private static final String DB_NAME = "courses.groups";
+    private static final String CROSS_DB_NAME = "courses.students_in_groups";
 
     public static final String INSERT_QUERY =
-            "INSERT INTO " +
+            " INSERT INTO " +
                     DB_NAME + "\n" +
                     "\t(name)\n" +
                     "\tVALUES " +
@@ -14,40 +14,40 @@ public class QueryContainer {
             ;
 
     public static final String SELECT_QUERY =
-            "SELECT " +
+            " SELECT " +
                     "id, name " +
                     "FROM " +
                     DB_NAME + ";"
             ;
 
     public static final String SELECT_WHERE_QUERY =
-            "SELECT " +
+            " SELECT " +
                     "id, name " +
                     "FROM " +
                     DB_NAME + " " +
                     "WHERE " +
-                    "id = ?;"
+                    "id = ?;\n"
             ;
 
     public static final String UPDATE_QUERY =
-            "UPDATE " +
+            " UPDATE " +
                     DB_NAME + " " +
                     "SET " +
                     "name = ? " +
                     "WHERE " +
-                    "id = ?;"
+                    "id = ?;\n"
             ;
 
     public static final String deleteQuery =
-            "DELETE FROM " +
+            " DELETE FROM " +
                     DB_NAME + " " +
                     "WHERE " +
-                    "id = ?\n;";
+                    "id = ?;\n";
 
     public static final String deleteCrossQuery =
-            "DELETE FROM " +
+            " DELETE FROM " +
                     CROSS_DB_NAME + " " +
                     "WHERE " +
-                    "group_id = ?;";
+                    "group_id = ?;\n";
 
 }
