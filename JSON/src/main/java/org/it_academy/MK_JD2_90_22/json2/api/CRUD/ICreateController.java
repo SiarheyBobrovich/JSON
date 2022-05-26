@@ -6,5 +6,5 @@ public interface ICreateController<C> {
      * Save a C-object
      * @param c - The C-object which will be saved
      */
-    void save(C c);
+    long save(C c);
 }

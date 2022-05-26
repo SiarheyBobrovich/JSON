@@ -26,12 +26,12 @@ public class GroupMapper {
     }
 
     public Group map(GroupDto groupDto) {
-        Group group = new Group();
+        Group result = new Group();
 
-        group.setId(group.getId());
-        group.setName(groupDto.getNewName());
+        result.setId(groupDto.getId());
+        result.setName(groupDto.getName());
 
-        return group;
+        return result;
     }
 
     public static GroupMapper getInstance() {

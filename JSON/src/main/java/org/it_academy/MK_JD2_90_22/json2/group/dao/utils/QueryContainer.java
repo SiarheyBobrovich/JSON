@@ -2,7 +2,7 @@ package org.it_academy.MK_JD2_90_22.json2.group.dao.utils;
 
 public class QueryContainer {
 
-    private static final String DB_NAME = "couses.groups";
+    private static final String DB_NAME = "courses.groups";
     private static final String CROSS_DB_NAME = "schemaCrossTableName";
 
     public static final String INSERT_QUERY =

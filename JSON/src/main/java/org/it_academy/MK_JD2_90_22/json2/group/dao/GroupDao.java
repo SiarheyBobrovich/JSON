@@ -1,6 +1,5 @@
 package org.it_academy.MK_JD2_90_22.json2.group.dao;
 
-import org.it_academy.MK_JD2_90_22.json.dao.DataSourceFactory;
 import org.it_academy.MK_JD2_90_22.json2.group.dao.api.ICRUDGroupDao;
 import org.it_academy.MK_JD2_90_22.json2.group.entity.Group;
 import org.it_academy.MK_JD2_90_22.json2.group.dao.api.IDao;
@@ -22,12 +21,16 @@ public class GroupDao implements IDao, ICRUDGroupDao {
     }
 
     @Override
-    public void save(Group group) {
-        try {
-            execute(QueryContainer.INSERT_QUERY, group.getName());
+    public long save(Group group) {
+        try (Connection connection = DataSourceFactory.getInstance().getConnection();
+             PreparedStatement statement = connection.prepareStatement(QueryContainer.INSERT_QUERY)) {
+
+            statement.setString(1, group.getName());
+
+            return statement.executeUpdate();
 
         }catch (SQLException e) {
-            throw new GroupDaoException("Insert failed ", e);
+            throw new GroupDaoException(500, "Insert failed ", e);
         }
     }
 
@@ -37,7 +40,7 @@ public class GroupDao implements IDao, ICRUDGroupDao {
             execute(QueryContainer.deleteQuery + QueryContainer.deleteCrossQuery, group.getId(), group.getId());
 
         }catch (SQLException e) {
-            throw new GroupDaoException("Insert failed ", e);
+            throw new GroupDaoException(500, "Insert failed ", e);
         }
     }
 
@@ -58,7 +61,7 @@ public class GroupDao implements IDao, ICRUDGroupDao {
             }
 
         }catch (SQLException e) {
-            throw new GroupDaoException("Select failed", e);
+            throw new GroupDaoException(500, "Select failed", e);
         }
     }
 
@@ -74,11 +77,11 @@ public class GroupDao implements IDao, ICRUDGroupDao {
                     return map(resultSet);
                 }
 
-                throw new GroupDaoException("404 Not Found");
+                throw new GroupDaoException(404, "404 Not Found");
             }
 
         }catch (SQLException e) {
-            throw new GroupDaoException("Get failed", e);
+            throw new GroupDaoException(500, "Get failed", e);
         }
     }
 
@@ -88,7 +91,7 @@ public class GroupDao implements IDao, ICRUDGroupDao {
             execute(QueryContainer.UPDATE_QUERY, group.getName(), group.getId());
 
         }catch (SQLException e) {
-            throw new GroupDaoException("Update failed", e);
+            throw new GroupDaoException(500, "Update failed", e);
         }
     }
 
