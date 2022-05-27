@@ -1,17 +1,17 @@
 package org.it_academy.MK_JD2_90_22.json2.group.dao;
 
 import org.it_academy.MK_JD2_90_22.json.exceptions.dao.GroupDaoException;
-import org.it_academy.MK_JD2_90_22.json2.group.dao.api.IValidationDao;
+import org.it_academy.MK_JD2_90_22.json2.group.dao.api.IDaoValidator;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class Validator implements IValidationDao {
+public class DaoValidator implements IDaoValidator {
 
-    private static final Validator instance = new Validator();
+    private static final DaoValidator instance = new DaoValidator();
 
-    private Validator() {
+    private DaoValidator() {
     }
 
     private final String SELECT_GROUP_BY_NAME_ID = "SELECT id FROM courses.groups WHERE name = ? AND id != ?";
@@ -46,7 +46,7 @@ public class Validator implements IValidationDao {
         }
     }
 
-    public static Validator getInstance() {
+    public static DaoValidator getInstance() {
         return instance;
     }
 }

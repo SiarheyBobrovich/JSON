@@ -3,8 +3,8 @@ package org.it_academy.MK_JD2_90_22.json2.group.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import org.it_academy.MK_JD2_90_22.json2.group.dto.GroupCreate;
-import org.it_academy.MK_JD2_90_22.json2.group.dto.GroupDto;
+import org.it_academy.MK_JD2_90_22.json2.group.dto.NewGroup;
+import org.it_academy.MK_JD2_90_22.json2.group.dto.UpdatedGroup;
 import org.it_academy.MK_JD2_90_22.json2.group.dto.GroupId;
 import org.it_academy.MK_JD2_90_22.json2.group.entity.Group;
 import org.it_academy.MK_JD2_90_22.json2.group.exceptions.GroupServiceException;
@@ -90,12 +90,12 @@ public class GroupServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         setEncodingType(req, resp);
 
-        GroupCreate groupCreate;
+        NewGroup newGroup;
 
         PrintWriter writer = resp.getWriter();
 
         try {
-            groupCreate = mapper.readValue(req.getInputStream(), GroupCreate.class);
+            newGroup = mapper.readValue(req.getInputStream(), NewGroup.class);
         }catch (JsonProcessingException e) {
             resp.setStatus(415);
             return;
@@ -104,7 +104,7 @@ public class GroupServlet extends HttpServlet {
         try {
             resp.setContentType("application/json");
             writer.write(mapper.writeValueAsString(
-                    service.save(groupCreate))
+                    service.save(newGroup))
             );
 
             resp.setStatus(201);
@@ -124,10 +124,10 @@ public class GroupServlet extends HttpServlet {
 
         PrintWriter writer = resp.getWriter();
 
-        GroupDto group;
+        UpdatedGroup group;
 
         try {
-            group = mapper.readValue(req.getInputStream(), GroupDto.class);
+            group = mapper.readValue(req.getInputStream(), UpdatedGroup.class);
         }catch (JsonProcessingException e) {
             resp.setStatus(415);
             return;

@@ -6,10 +6,7 @@ import org.it_academy.MK_JD2_90_22.json2.group.dao.api.IDao;
 import org.it_academy.MK_JD2_90_22.json2.group.dao.utils.QueryContainer;
 import org.it_academy.MK_JD2_90_22.json2.group.exceptions.GroupDaoException;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,21 +20,29 @@ public class GroupDao implements IDao, ICRUDGroupDao {
     @Override
     public long save(Group group) {
         try (Connection connection = DataSourceFactory.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(QueryContainer.INSERT_QUERY)) {
+             PreparedStatement statement = connection.prepareStatement(QueryContainer.INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setString(1, group.getName());
+            statement.executeUpdate();
 
-            return statement.executeUpdate();
+            try(ResultSet generatedKeys = statement.getGeneratedKeys()) {
+
+                if (generatedKeys.next()) {
+                    return generatedKeys.getLong("id");
+                }
+            }
 
         }catch (SQLException e) {
             throw new GroupDaoException(500, "Insert failed ", e);
         }
+
+        throw new GroupDaoException(500, "Insert failed");
     }
 
     @Override
     public void delete(Group group) {
         try {
-            execute(QueryContainer.deleteQuery + QueryContainer.deleteCrossQuery, group.getId(), group.getId());
+            execute(QueryContainer.deleteCrossQuery + QueryContainer.deleteQuery, group.getId(), group.getId());
 
         }catch (SQLException e) {
             throw new GroupDaoException(500, "Delete failed ", e);

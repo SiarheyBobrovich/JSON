@@ -1,16 +1,15 @@
 package org.it_academy.MK_JD2_90_22.json2.group.service;
 
-import org.it_academy.MK_JD2_90_22.json.dao.ValidationDao1_1;
 import org.it_academy.MK_JD2_90_22.json2.group.dao.GroupDao;
-import org.it_academy.MK_JD2_90_22.json2.group.dao.Validator;
+import org.it_academy.MK_JD2_90_22.json2.group.dao.DaoValidator;
 import org.it_academy.MK_JD2_90_22.json2.group.dao.api.ICRUDGroupDao;
-import org.it_academy.MK_JD2_90_22.json2.group.dao.api.IValidationDao;
-import org.it_academy.MK_JD2_90_22.json2.group.dto.GroupDto;
+import org.it_academy.MK_JD2_90_22.json2.group.dao.api.IDaoValidator;
+import org.it_academy.MK_JD2_90_22.json2.group.dto.UpdatedGroup;
 import org.it_academy.MK_JD2_90_22.json2.group.dto.GroupId;
 import org.it_academy.MK_JD2_90_22.json2.group.entity.Group;
 import org.it_academy.MK_JD2_90_22.json2.group.exceptions.GroupDaoException;
 import org.it_academy.MK_JD2_90_22.json2.group.exceptions.GroupServiceException;
-import org.it_academy.MK_JD2_90_22.json2.group.dto.GroupCreate;
+import org.it_academy.MK_JD2_90_22.json2.group.dto.NewGroup;
 import org.it_academy.MK_JD2_90_22.json2.group.mapers.GroupMapper;
 import org.it_academy.MK_JD2_90_22.json2.group.service.api.ICRUDGroupService;
 
@@ -20,10 +19,10 @@ public class GroupService implements ICRUDGroupService {
 
     private static final GroupService instance = new GroupService();
     private static final ICRUDGroupDao dao = GroupDao.getInstance();
-    private static final IValidationDao validator = Validator.getInstance();
+    private static final IDaoValidator validator = DaoValidator.getInstance();
 
     @Override
-    public long save(GroupCreate group) {
+    public long save(NewGroup group) {
         String name = group.getName();
 
         if (name == null || name.isEmpty() || name.length() > 255) {
@@ -80,7 +79,7 @@ public class GroupService implements ICRUDGroupService {
     }
 
     @Override
-    public void update(GroupDto group) {
+    public void update(UpdatedGroup group) {
         String newName = group.getName();
 
         if (newName == null || newName.isEmpty() || newName.length() > 255) {
