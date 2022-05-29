@@ -45,10 +45,23 @@ public class GroupService implements ICRUDGroupService {
 
     @Override
     public void delete(GroupId groupId) {
-        Group entity = GroupMapper.getInstance().map(groupId.getId());
+        if (groupId.getId() == null) {
+            throw new GroupServiceException(415, "Unsupported media type");
+        }
+
+        Group group;
 
         try {
-            dao.delete(entity);
+            group = dao.get(groupId.getId());
+
+        }catch (GroupDaoException e) {
+            group = new Group();
+            group.setId(group.getId());
+        }
+
+        try {
+            dao.delete(group);
+
         }catch (GroupDaoException e) {
             throw new GroupServiceException(e.getStatus(), e.getMessage(), e);
         }
@@ -86,12 +99,15 @@ public class GroupService implements ICRUDGroupService {
             throw new GroupServiceException(400, "Incorrect new name");
         }
 
-        try {
-            if (validator.isExistGroup(group.getId(), group.getName())) {
-                throw new GroupServiceException(409, "Conflict");
-            }
+        if (!get(group.getId()).getName().equals(group.getName())) {
 
-        }catch (GroupDaoException e) {/*ignore*/}
+            try {
+                if (validator.isExistGroup(group.getName())) {
+                    throw new GroupServiceException(409, "Conflict");
+                }
+
+            } catch (GroupDaoException e) {/*ignore*/}
+        }
 
         Group entity = GroupMapper.getInstance().map(group);
 

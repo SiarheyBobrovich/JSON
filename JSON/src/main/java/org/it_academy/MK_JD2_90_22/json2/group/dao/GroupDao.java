@@ -33,10 +33,10 @@ public class GroupDao implements IDao, ICRUDGroupDao {
             }
 
         }catch (SQLException e) {
-            throw new GroupDaoException(500, "Insert failed ", e);
+            throw new GroupDaoException(500, "Save failed ", e);
         }
 
-        throw new GroupDaoException(500, "Insert failed");
+        throw new GroupDaoException(500, "Save failed");
     }
 
     @Override

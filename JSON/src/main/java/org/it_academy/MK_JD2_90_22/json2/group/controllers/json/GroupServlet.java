@@ -1,4 +1,4 @@
-package org.it_academy.MK_JD2_90_22.json2.group.controllers;
+package org.it_academy.MK_JD2_90_22.json2.group.controllers.json;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

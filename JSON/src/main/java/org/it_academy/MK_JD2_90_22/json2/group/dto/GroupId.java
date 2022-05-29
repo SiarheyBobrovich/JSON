@@ -4,14 +4,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 public class GroupId {
-    private final long id;
+    private final Long id;
 
     @JsonCreator
-    public GroupId(@JsonSetter("id") long id) {
+    public GroupId(@JsonSetter("id") Long id) {
         this.id = id;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 }

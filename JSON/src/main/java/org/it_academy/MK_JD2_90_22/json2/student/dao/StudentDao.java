@@ -6,7 +6,7 @@ import org.it_academy.MK_JD2_90_22.json2.group.dao.api.IDao;
 import org.it_academy.MK_JD2_90_22.json2.student.dao.api.ICRUDStudentDao;
 import org.it_academy.MK_JD2_90_22.json2.student.dao.entity.Student;
 import org.it_academy.MK_JD2_90_22.json2.student.dao.util.StudentsQueryContainer;
-import org.it_academy.MK_JD2_90_22.json2.student.exceptions.StudentsDaoException;
+import org.it_academy.MK_JD2_90_22.json2.student.exceptions.students.StudentsDaoExceptionIllegal;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -38,18 +38,21 @@ public class StudentDao implements IDao, ICRUDStudentDao {
             }
 
         }catch (SQLException e) {
-            throw new StudentsDaoException(500, "Insert failed", e);
+            throw new StudentsDaoExceptionIllegal(500, "Insert failed", e);
         }
 
-        throw new StudentsDaoException(500, "Insert failed");
+        throw new StudentsDaoExceptionIllegal(500, "Insert failed");
     }
 
     @Override
     public void delete(Student student) {
         try {
-            execute(StudentsQueryContainer.DELETE_FROM_CROSS_TABLE + StudentsQueryContainer.DELETE_QUERY, student.getId());
+            execute(
+                    StudentsQueryContainer.DELETE_FROM_CROSS_TABLE + StudentsQueryContainer.DELETE_QUERY,
+                    student.getId(), student.getId());
+
         }catch (SQLException e) {
-            throw new StudentsDaoException(500, "Delete failed", e);
+            throw new StudentsDaoExceptionIllegal(500, "Delete failed", e);
         }
     }
 
@@ -66,10 +69,9 @@ public class StudentDao implements IDao, ICRUDStudentDao {
                 }
 
                 return all;
-
             }
         }catch (SQLException e) {
-            throw new StudentsDaoException(500, "Select failed", e);
+            throw new StudentsDaoExceptionIllegal(500, "Select failed", e);
         }
     }
 
@@ -87,24 +89,23 @@ public class StudentDao implements IDao, ICRUDStudentDao {
                     return map(resultSet);
                 }
 
+                throw new StudentsDaoExceptionIllegal(404, "Not found");
             }
         }catch (SQLException e) {
-            throw new StudentsDaoException(500, "Select failed", e);
+            throw new StudentsDaoExceptionIllegal(500, "Select failed", e);
         }
-
-        throw new StudentsDaoException(500, "Select failed");
     }
 
     @Override
     public void update(Student student) {
         try {
             execute(StudentsQueryContainer.UPDATE_QUERY,
-                    student.getId(), student.getName(), student.getAge(),
-                    student.getScore(), student.isOlympicGamer()
+                    student.getName(), student.getAge(), student.getScore(),
+                    student.isOlympicGamer(), student.getId()
             );
 
         }catch (SQLException e) {
-            throw new StudentsDaoException(500, "Delete failed", e);
+            throw new StudentsDaoExceptionIllegal(500, "Delete failed", e);
         }
     }
 

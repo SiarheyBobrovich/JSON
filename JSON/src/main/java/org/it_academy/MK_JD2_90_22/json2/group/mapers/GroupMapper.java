@@ -8,19 +8,12 @@ public class GroupMapper {
 
     private static final GroupMapper instance = new GroupMapper();
 
-    public GroupMapper() {
+    private GroupMapper() {
     }
 
     public Group map(NewGroup newGroup) {
         Group group = new Group();
         group.setName(newGroup.getName());
-
-        return group;
-    }
-
-    public Group map(long id) {
-        Group group = new Group();
-        group.setId(id);
 
         return group;
     }
