@@ -1,20 +1,14 @@
 package org.it_academy.MK_JD2_90_22.json2.group.exceptions;
 
-public class GroupDaoException extends IllegalStateException {
+import org.it_academy.MK_JD2_90_22.json2.student.exceptions.api.CoursesIllegalStateException;
 
-    private final int status;
+public class GroupDaoException extends CoursesIllegalStateException {
 
     public GroupDaoException(int status, String message) {
-        super(message);
-        this.status = status;
+        super(status, message);
     }
 
     public GroupDaoException(int status, String s, Throwable cause) {
-        super(s, cause);
-        this.status = status;
-    }
-
-    public int getStatus() {
-        return status;
+        super(status, s, cause);
     }
 }

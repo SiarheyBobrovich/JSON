@@ -13,7 +13,7 @@ public interface ICrossDaoController<G, S> {
 
     Map<G, Set<S>> getAll();
 
-    Map.Entry<G, Set<S>> getG(long id);
+    Set<S> getG(long id);
 
     G getS(long id);
 }

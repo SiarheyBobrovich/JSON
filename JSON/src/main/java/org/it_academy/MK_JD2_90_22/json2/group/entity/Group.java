@@ -1,5 +1,8 @@
 package org.it_academy.MK_JD2_90_22.json2.group.entity;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.util.Objects;
 
 public class Group {
@@ -33,5 +36,13 @@ public class Group {
     @Override
     public int hashCode() {
         return Objects.hash(id, name);
+    }
+
+    @Override
+    public String toString() {
+        return "Group{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

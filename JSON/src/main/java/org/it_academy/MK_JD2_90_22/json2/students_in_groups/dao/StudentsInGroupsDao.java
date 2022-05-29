@@ -40,7 +40,7 @@ public class StudentsInGroupsDao implements IDao, ICrossDaoController<Group, Stu
     @Override
     public void deleteG(Group group) {
         try {
-            execute(QueryContainer.DELETE_BY_STUDENT_ID_QUERY, group.getId());
+            execute(QueryContainer.DELETE_BY_GROUP_ID_QUERY, group.getId());
 
         }catch (SQLException e) {
             throw new StudentsInGroupsDaoException(500, "Delete failed", e);
@@ -54,16 +54,20 @@ public class StudentsInGroupsDao implements IDao, ICrossDaoController<Group, Stu
 
             try(ResultSet resultSet = statement.executeQuery()) {
 
-                return map(resultSet);
+                if (resultSet.next()) {
+                    return map(resultSet);
+                }
             }
 
         }catch (SQLException e) {
             throw new StudentsInGroupsDaoException(500, "Select failed", e);
         }
+
+        return new HashMap<>();
     }
 
     @Override
-    public Map.Entry<Group, Set<Student>> getG(long id) {
+    public Set<Student> getG(long id) {
         try (Connection connection = DataSourceFactory.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(QueryContainer.SELECT_BY_GROUP_ID_QUERY)) {
 
@@ -71,8 +75,8 @@ public class StudentsInGroupsDao implements IDao, ICrossDaoController<Group, Stu
 
             try(ResultSet resultSet = statement.executeQuery()) {
 
-                if (resultSet.getRow() > 0) {
-                    return map(resultSet).entrySet().iterator().next();
+                if (resultSet.next()) {
+                    return mapStudent(resultSet);
                 }
             }
 
@@ -92,10 +96,10 @@ public class StudentsInGroupsDao implements IDao, ICrossDaoController<Group, Stu
 
             try(ResultSet resultSet = statement.executeQuery()) {
 
-                if (resultSet.getRow() > 0) {
+                if (resultSet.next()) {
                     Group group = new Group();
-                    group.setName(resultSet.getString("g.name"));
-                    group.setId(resultSet.getLong("g.id"));
+                    group.setName(resultSet.getString("name"));
+                    group.setId(resultSet.getLong("id"));
 
                     return group;
                 }
@@ -112,36 +116,55 @@ public class StudentsInGroupsDao implements IDao, ICrossDaoController<Group, Stu
 
         Map<Group, Set<Student>> resultList = new HashMap<>();
 
-        while (rs.next()) {
-            long groupId = rs.getLong("g.id");
-            String groupName = rs.getString("g.name");
+        Long groupId = null;
+        Group group = null;
+        Set<Student> students = null;
 
-            Group group = new Group();
-            group.setId(groupId);
-            group.setName(groupName);
+        do {
+            long currentGroupId = rs.getLong("group_id");
 
-            Set<Student> students = new HashSet<>();
-            long currentGroupId;
+            if (groupId == null || groupId != currentGroupId) {
+                groupId = currentGroupId;
 
-            do {
+                String groupName = rs.getString("group_name");
 
-                currentGroupId = rs.getLong("g.id");
+                group = new Group();
+                group.setId(groupId);
+                group.setName(groupName);
 
-                Student student = new Student();
-                student.setId(rs.getLong("s.id"));
-                student.setName(rs.getString("s.name"));
-                student.setAge(rs.getInt("s.age"));
-                student.setScore(rs.getDouble("s.score"));
-                student.setOlympicGamer(rs.getBoolean("olympic_gamer"));
+                students = new LinkedHashSet<>();
+            }
 
-                students.add(student);
+            Student student = new Student();
+            student.setId(rs.getLong("student_id"));
+            student.setName(rs.getString("student_name"));
+            student.setAge(rs.getInt("student_age"));
+            student.setScore(rs.getDouble("student_score"));
+            student.setOlympicGamer(rs.getBoolean("student_olympic_gamer"));
 
-            } while (Objects.equals(currentGroupId, groupId));
+            students.add(student);
 
             resultList.put(group, students);
-        }
+
+        }while (rs.next());
 
         return resultList;
+    }
+
+    private Set<Student> mapStudent(ResultSet rs) throws SQLException {
+        Set<Student> students = new LinkedHashSet<>();
+
+        do {
+            Student student = new Student();
+            student.setId(rs.getLong("id"));
+            student.setName(rs.getString("name"));
+            student.setScore(rs.getDouble("score"));
+            student.setOlympicGamer(rs.getBoolean("olympic_gamer"));
+
+            students.add(student);
+        }while (rs.next());
+
+        return students;
     }
 
     public static StudentsInGroupsDao getInstance() {

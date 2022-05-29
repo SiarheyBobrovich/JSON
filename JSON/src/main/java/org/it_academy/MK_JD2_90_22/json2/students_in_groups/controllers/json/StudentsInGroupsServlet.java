@@ -4,21 +4,28 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import org.it_academy.MK_JD2_90_22.json2.group.dto.GroupId;
+import org.it_academy.MK_JD2_90_22.json2.group.entity.Group;
+import org.it_academy.MK_JD2_90_22.json2.student.dao.entity.Student;
 import org.it_academy.MK_JD2_90_22.json2.student.dto.StudentId;
 import org.it_academy.MK_JD2_90_22.json2.student.exceptions.studentsInGroups.StudentsInGroupsServiceException;
 import org.it_academy.MK_JD2_90_22.json2.students_in_groups.dao.api.ICrossServiceController;
 import org.it_academy.MK_JD2_90_22.json2.students_in_groups.dto.GroupStudentId;
+import org.it_academy.MK_JD2_90_22.json2.students_in_groups.dto.GroupWithStudents;
 import org.it_academy.MK_JD2_90_22.json2.students_in_groups.services.StudentsInGroupsService;
 import org.it_academy.MK_JD2_90_22.json2.utils.ControllerUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Map;
+import java.util.Set;
 
+@WebServlet(name = "StudentsInGroupsServlet", urlPatterns = "/group1/students1")
 public class StudentsInGroupsServlet extends HttpServlet {
 
     private final ICrossServiceController service = StudentsInGroupsService.getInstance();
@@ -28,6 +35,7 @@ public class StudentsInGroupsServlet extends HttpServlet {
         mapper = new ObjectMapper()
                 .setPropertyNamingStrategy(PropertyNamingStrategies.LOWER_CAMEL_CASE);
     }
+
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -53,21 +61,23 @@ public class StudentsInGroupsServlet extends HttpServlet {
 
             }else if (groupId != null) {
 
-                    result = mapper.writeValueAsString(
-                            service.getG(
-                                    Long.parseLong(groupId))
-                    );
-
-                    resp.setContentType("application/json");
-                    writer.write(result);
+                resp.setContentType("application/json");
+                writer.write(mapper.writeValueAsString(
+                        service.getG(Long.parseLong(groupId))));
 
             }else {
-                result = mapper.writeValueAsString(
-                        service.getAll()
-                );
-
                 resp.setContentType("application/json");
-                writer.write(result);
+
+                GroupWithStudents map;
+
+                for (Map.Entry<Group, Set<Student>> entry : service.getAll().entrySet()) {
+                    Group group = entry.getKey();
+                    Set<Student> students = entry.getValue();
+
+                    map = new GroupWithStudents(group.getId(), group.getName(), students);
+
+                    writer.write(mapper.writeValueAsString(map));
+                }
             }
 
         }catch (NumberFormatException e) {
@@ -132,16 +142,18 @@ public class StudentsInGroupsServlet extends HttpServlet {
         PrintWriter writer = resp.getWriter();
         ServletInputStream inputStream = req.getInputStream();
 
-        GroupId groupId;
-        StudentId studentId;
+        GroupStudentId id;
 
         try {
-            groupId = mapper.readValue(inputStream, GroupId.class);
-            service.deleteG(groupId);
+            id = mapper.readValue(inputStream, GroupStudentId.class);
+
+            service.delete(id);
+
+            resp.setStatus(204);
 
         }catch (JsonProcessingException e) {
-            studentId = mapper.readValue(inputStream, StudentId.class);
-            service.deleteS(studentId);
+            resp.setStatus(415);
+            writer.write("Unsupported media type");
 
         }catch (StudentsInGroupsServiceException e) {
             resp.setStatus(e.getStatus());
@@ -150,10 +162,6 @@ public class StudentsInGroupsServlet extends HttpServlet {
             if (e.getStatus() == 500) {
                 log(e.getMessage(), e);
             }
-
-        }catch (RuntimeException e) {
-            resp.setStatus(415);
-            writer.write("Unsupported media type");
         }
     }
 }

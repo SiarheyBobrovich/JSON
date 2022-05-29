@@ -4,4 +4,6 @@ public interface IDaoValidator {
 
     boolean isExistGroup(long id, String groupName);
     boolean isExistGroup(String groupName);
+
+    boolean isExistCrossStudent(long id);
 }
