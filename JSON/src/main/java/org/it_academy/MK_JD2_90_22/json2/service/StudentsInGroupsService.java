@@ -13,7 +13,7 @@ import org.it_academy.MK_JD2_90_22.json2.exceptions.api.CoursesIllegalStateExcep
 import org.it_academy.MK_JD2_90_22.json2.exceptions.StudentsInGroupsServiceException;
 import org.it_academy.MK_JD2_90_22.json2.dao.StudentsInGroupsDao;
 import org.it_academy.MK_JD2_90_22.json2.dao.api.ICrossDaoController;
-import org.it_academy.MK_JD2_90_22.json2.dao.api.ICrossServiceController;
+import org.it_academy.MK_JD2_90_22.json2.service.api.ICrossServiceController;
 import org.it_academy.MK_JD2_90_22.json2.dto.GroupStudentId;
 import org.it_academy.MK_JD2_90_22.json2.dto.GroupWithStudents;
 

@@ -5,7 +5,7 @@ import org.it_academy.MK_JD2_90_22.json2.dao.api.IDao;
 import org.it_academy.MK_JD2_90_22.json2.dao.api.ICRUDStudentDao;
 import org.it_academy.MK_JD2_90_22.json2.dao.entity.Student;
 import org.it_academy.MK_JD2_90_22.json2.dao.utils.StudentsQueryContainer;
-import org.it_academy.MK_JD2_90_22.json2.exceptions.StudentsDaoExceptionIllegal;
+import org.it_academy.MK_JD2_90_22.json2.exceptions.StudentsDaoException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -37,10 +37,10 @@ public class StudentDao implements IDao, ICRUDStudentDao {
             }
 
         }catch (SQLException e) {
-            throw new StudentsDaoExceptionIllegal(500, "Insert failed", e);
+            throw new StudentsDaoException(500, "Insert failed", e);
         }
 
-        throw new StudentsDaoExceptionIllegal(500, "Insert failed");
+        throw new StudentsDaoException(500, "Insert failed");
     }
 
     @Override
@@ -51,7 +51,7 @@ public class StudentDao implements IDao, ICRUDStudentDao {
                     student.getId(), student.getId());
 
         }catch (SQLException e) {
-            throw new StudentsDaoExceptionIllegal(500, "Delete failed", e);
+            throw new StudentsDaoException(500, "Delete failed", e);
         }
     }
 
@@ -70,7 +70,7 @@ public class StudentDao implements IDao, ICRUDStudentDao {
                 return all;
             }
         }catch (SQLException e) {
-            throw new StudentsDaoExceptionIllegal(500, "Select failed", e);
+            throw new StudentsDaoException(500, "Select failed", e);
         }
     }
 
@@ -88,10 +88,10 @@ public class StudentDao implements IDao, ICRUDStudentDao {
                     return map(resultSet);
                 }
 
-                throw new StudentsDaoExceptionIllegal(404, "Not found");
+                throw new StudentsDaoException(404, "Not found");
             }
         }catch (SQLException e) {
-            throw new StudentsDaoExceptionIllegal(500, "Select failed", e);
+            throw new StudentsDaoException(500, "Select failed", e);
         }
     }
 
@@ -104,7 +104,7 @@ public class StudentDao implements IDao, ICRUDStudentDao {
             );
 
         }catch (SQLException e) {
-            throw new StudentsDaoExceptionIllegal(500, "Delete failed", e);
+            throw new StudentsDaoException(500, "Delete failed", e);
         }
     }
 

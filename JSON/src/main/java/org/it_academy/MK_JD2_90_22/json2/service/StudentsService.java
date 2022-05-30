@@ -1,6 +1,6 @@
 package org.it_academy.MK_JD2_90_22.json2.service;
 
-import org.it_academy.MK_JD2_90_22.json2.exceptions.StudentsDaoExceptionIllegal;
+import org.it_academy.MK_JD2_90_22.json2.exceptions.StudentsDaoException;
 import org.it_academy.MK_JD2_90_22.json2.dao.StudentDao;
 import org.it_academy.MK_JD2_90_22.json2.dao.api.ICRUDStudentDao;
 import org.it_academy.MK_JD2_90_22.json2.dao.entity.Student;
@@ -8,6 +8,9 @@ import org.it_academy.MK_JD2_90_22.json2.dto.NewStudent;
 import org.it_academy.MK_JD2_90_22.json2.dto.StudentId;
 import org.it_academy.MK_JD2_90_22.json2.dto.UpdatedStudent;
 import org.it_academy.MK_JD2_90_22.json2.exceptions.StudentsServiceException;
+import org.it_academy.MK_JD2_90_22.json2.exceptions.api.CoursesIllegalStateException;
+import org.it_academy.MK_JD2_90_22.json2.factories.IStudentFactory;
+import org.it_academy.MK_JD2_90_22.json2.factories.StudentFactory;
 import org.it_academy.MK_JD2_90_22.json2.service.api.ICRUDStudentsService;
 
 import java.util.List;
@@ -21,42 +24,21 @@ public class StudentsService implements ICRUDStudentsService {
 
     @Override
     public long save(NewStudent newStudent) {
-        String name = newStudent.getName();
+        IStudentFactory factory = new StudentFactory();
 
-        if (name == null || name.isEmpty() || name.length() > 255 || name.matches("[\\s\\p{Alpha}]")) {
-            throw new StudentsServiceException(400, "Incorrect name");
-        }
-
-        if (newStudent.getAge() == null || newStudent.getAge() < 1) {
-            throw new StudentsServiceException(400, "Incorrect age");
-        }
-
-        return dao.save(map(newStudent.getName(), newStudent.getAge(),
-                newStudent.getScore() == null ? 0.0 : newStudent.getScore(),
-                newStudent.getOlympicGamer() != null)
-        );
+        return dao.save(factory.get(newStudent));
     }
 
     @Override
     public void delete(StudentId studentId) {
-        if (studentId.getId() == null) {
-            throw new StudentsServiceException(415, "Unsupported media type");
-        }
+        IStudentFactory factory = new StudentFactory();
 
-        Student student;
-
-        try {
-            student = dao.get(studentId.getId());
-
-        }catch (StudentsDaoExceptionIllegal e) {
-            student = new Student();
-            student.setId(studentId.getId());
-        }
+        Student student = factory.get(studentId);
 
         try {
             dao.delete(student);
 
-        }catch (StudentsDaoExceptionIllegal e) {
+        }catch (CoursesIllegalStateException e) {
             throw new StudentsServiceException(e.getStatus(), e.getMessage(), e);
         }
     }
@@ -66,7 +48,7 @@ public class StudentsService implements ICRUDStudentsService {
         try {
             return dao.getAll();
 
-        }catch (StudentsDaoExceptionIllegal e) {
+        }catch (CoursesIllegalStateException e) {
             throw new StudentsServiceException(e.getStatus(), e.getMessage(), e);
         }
     }
@@ -76,76 +58,32 @@ public class StudentsService implements ICRUDStudentsService {
         try {
             return dao.get(id);
 
-        }catch (StudentsDaoExceptionIllegal e) {
+        }catch (CoursesIllegalStateException e) {
             throw new StudentsServiceException(e.getStatus(), e.getMessage(), e);
         }
     }
 
     @Override
     public void update(UpdatedStudent updatedStudent) {
-        String name = updatedStudent.getName();
-        Integer age = updatedStudent.getAge();
-        Double score = updatedStudent.getScore();
-        Boolean olympicGamer = updatedStudent.getOlympicGamer();
+        StudentFactory studentFactory = new StudentFactory();
 
-        if (updatedStudent.getId() == null) {
-            throw new StudentsServiceException(400, "Incorrect id");
-        }
-
-        if (name != null &&
-                (name.isEmpty() || name.length() > 255 || name.matches("[\\s\\p{Alpha}]"))) {
-            throw new StudentsServiceException(400, "Incorrect name");
-        }
-
-        if (age != null && age < 1) {
-            throw new StudentsServiceException(400, "Incorrect age");
-        }
-
-        if (score != null && score < 0.0) {
-            throw new StudentsServiceException(400, "Incorrect score");
-        }
-
-        Student student;
+        Student update = studentFactory.get(updatedStudent);
+        Student currentStudent;
 
         try {
-            student = get(updatedStudent.getId());
+            currentStudent = get(updatedStudent.getId());
 
-        }catch (StudentsDaoExceptionIllegal e) {
+        }catch (CoursesIllegalStateException e) {
             throw new StudentsServiceException(e.getStatus(), e.getMessage(), e);
         }
 
-        if (name != null) {
-            student.setName(name);
-        }
-
-        if (age != null) {
-            student.setAge(age);
-        }
-
-        if (score != null) {
-            student.setScore(score);
-        }
-
-        if (olympicGamer != null) {
-            student.setOlympicGamer(olympicGamer);
-        }
+        studentFactory.update(update, currentStudent);
 
         try {
-            dao.update(student);
-        }catch (StudentsDaoExceptionIllegal e) {
+            dao.update(update);
+        }catch (StudentsDaoException e) {
             throw new StudentsServiceException(e.getStatus(), e.getMessage(), e);
         }
-    }
-
-    private Student map(String name, int age, double score, boolean olympicGamer) {
-        Student student = new Student();
-
-        student.setName(name);
-        student.setAge(age);
-        student.setScore(score);
-        student.setOlympicGamer(olympicGamer);
-
-        return student;
     }
 
     public static StudentsService getInstance() {

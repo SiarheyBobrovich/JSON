@@ -1,8 +1,8 @@
 package org.it_academy.MK_JD2_90_22.json2.exceptions;
 
-import org.it_academy.MK_JD2_90_22.json2.exceptions.api.CoursesIllegalStateException;
+import org.it_academy.MK_JD2_90_22.json2.exceptions.api.CoursesIllegalArgumentException;
 
-public class ValidationException extends CoursesIllegalStateException {
+public class ValidationException extends CoursesIllegalArgumentException {
     public ValidationException(int status, String message) {
         super(status, message);
     }

@@ -5,7 +5,10 @@ public class StudentsInGroupsQueryContainer {
     private static final String DB_SCHEMA_TABLE_NAME = "courses.students_in_groups";
 
     public static final String INSERT_QUERY =
-            "INSERT INTO " + DB_SCHEMA_TABLE_NAME + " (group_id, student_id) VALUES (?, ?);";
+            "INSERT INTO " +
+                 DB_SCHEMA_TABLE_NAME +
+                    " (group_id, student_id)" +
+            " VALUES (?, ?);\n";
 
     public static final String SELECT_ALL_QUERY =
             "SELECT \n" +
@@ -28,27 +31,46 @@ public class StudentsInGroupsQueryContainer {
                 "\tsg.student_id = s.id\n" +
             "ORDER BY \n" +
                 "\tg.id, \n" +
-                "\ts.id;";
+                "\ts.id;\n";
 
     public static final String SELECT_BY_GROUP_ID_QUERY =
             "SELECT " +
-                    "s.id, s.name, s.age, s.score, s.olympic_gamer " +
-                    "FROM  " + DB_SCHEMA_TABLE_NAME + " as sg " +
-                    "JOIN courses.students as s ON sg.student_id = s.id " +
-                    "WHERE sg.group_id = ?";
+                "s.id," +
+                " s.name," +
+                " s.age," +
+                " s.score," +
+                " s.olympic_gamer " +
+            "FROM " +
+                DB_SCHEMA_TABLE_NAME + " as sg " +
+            "JOIN " +
+                "courses.students as s " +
+            "ON " +
+                "sg.student_id = s.id " +
+            "WHERE sg.group_id = ? " +
+            "ORDER BY id;\n";
 
     public static final String SELECT_BY_STUDENT_ID_QUERY =
             "SELECT " +
-                    "g.id, g.name " +
-                    "FROM  " + DB_SCHEMA_TABLE_NAME + " as sg " +
-                    "JOIN courses.groups as g ON sg.group_id = g.id " +
-                    "WHERE sg.student_id = ?";
+                "g.id, " +
+                "g.name " +
+            "FROM " +
+                DB_SCHEMA_TABLE_NAME + " as sg " +
+            "JOIN " +
+                "courses.groups as g " +
+            "ON " +
+                "sg.group_id = g.id " +
+            "WHERE " +
+                "sg.student_id = ?;\n";
 
     public static final String DELETE_BY_STUDENT_ID_QUERY =
-            "DELETE FROM " +  DB_SCHEMA_TABLE_NAME + "  WHERE student_id = ?";
+            "DELETE FROM " +
+                DB_SCHEMA_TABLE_NAME + " " +
+            "WHERE " +
+                "student_id = ?;\n";
 
     public static final String DELETE_BY_GROUP_ID_QUERY =
-            "DELETE FROM " +  DB_SCHEMA_TABLE_NAME + "  WHERE group_id = ?";
-
-
+            "DELETE FROM " +
+                DB_SCHEMA_TABLE_NAME + " " +
+            "WHERE " +
+                "group_id = ?;\n";
 }

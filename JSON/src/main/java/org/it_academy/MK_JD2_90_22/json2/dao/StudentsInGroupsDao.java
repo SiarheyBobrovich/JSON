@@ -1,5 +1,8 @@
 package org.it_academy.MK_JD2_90_22.json2.dao;
 
+import com.mchange.v1.identicator.IdHashMap;
+import com.mchange.v1.identicator.Identicator;
+import com.mchange.v1.identicator.IdentityHashCodeIdenticator;
 import org.it_academy.MK_JD2_90_22.json2.dao.api.IDao;
 import org.it_academy.MK_JD2_90_22.json2.dao.entity.Group;
 import org.it_academy.MK_JD2_90_22.json2.dao.entity.Student;
@@ -113,7 +116,7 @@ public class StudentsInGroupsDao implements IDao, ICrossDaoController<Group, Stu
 
     private Map<Group, List<Student>> map(ResultSet rs) throws SQLException {
 
-        Map<Group, List<Student>> resultList = new HashMap<>();
+        Map<Group, List<Student>> resultList = new LinkedHashMap<>();
 
         Long groupId = null;
         Group group = null;
@@ -157,6 +160,7 @@ public class StudentsInGroupsDao implements IDao, ICrossDaoController<Group, Stu
             Student student = new Student();
             student.setId(rs.getLong("id"));
             student.setName(rs.getString("name"));
+            student.setAge(rs.getInt("age"));
             student.setScore(rs.getDouble("score"));
             student.setOlympicGamer(rs.getBoolean("olympic_gamer"));
 

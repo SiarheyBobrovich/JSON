@@ -8,61 +8,62 @@ public class StudentsQueryContainer {
 
     public static final String INSERT_QUERY =
             "INSERT INTO " +
-                    DB_NAME + " (" +
+                DB_NAME + " (" +
                     "name, " +
                     "age, " +
                     "score, " +
                     "olympic_gamer" +
-                    ") " +
-                    "VALUES " +
-                    "(?, ?, ?, ?);"
-            ;
+                ") " +
+            "VALUES " +
+                "(?, ?, ?, ?);\n";
 
     public static final String SELECT_QUERY =
             "SELECT " +
-                    "id, " +
-                    "name, " +
-                    "age, " +
-                    "score, " +
-                    "olympic_gamer " +
-                    "FROM " +
-                    DB_NAME + ";"
-            ;
+                "id, " +
+                "name, " +
+                "age, " +
+                "score, " +
+                "olympic_gamer " +
+            "FROM " +
+                DB_NAME + " " +
+            "ORDER BY " +
+                "id;\n";
 
     //Сформировать запрос
     public static final String SELECT_WHERE_QUERY =
             "SELECT " +
-                    "id, " +
-                    "name, " +
-                    "age, " +
-                    "score, " +
-                    "olympic_gamer " +
-                    "FROM " +
-                    DB_NAME + " " +
-                    "WHERE " +
-                    "id = ?;"
-            ;
+                "id, " +
+                "name, " +
+                "age, " +
+                "score, " +
+                "olympic_gamer " +
+            "FROM " +
+                DB_NAME + " " +
+            "WHERE " +
+                "id = ?;\n";
 
-
-    //Сформировать запрос
     public static final String UPDATE_QUERY =
             "UPDATE " +
-                    DB_NAME + " " +
-                    "SET " +
+                DB_NAME + " " +
+                "SET " +
                     "name = ?, " +
                     "age = ?, " +
                     "score = ?, " +
                     "olympic_gamer = ? " +
-                    "WHERE " +
-                    "id = ?;"
-            ;
+                "WHERE " +
+                    "id = ?\n;";
 
     public static final String DELETE_QUERY =
-            "DELETE FROM " +
+            "DELETE " +
+                "FROM " +
                     DB_NAME + " " +
-                    "WHERE " +
-                    "id = ?;";
+                "WHERE " +
+                    "id = ?;\n";
 
     public static final String DELETE_FROM_CROSS_TABLE =
-            "DELETE FROM " + CROSS_DB_NAME + " WHERE student_id = ?;";
+            "DELETE " +
+                "FROM " +
+                    CROSS_DB_NAME + " " +
+                "WHERE " +
+                    "student_id = ?;\n";
 }

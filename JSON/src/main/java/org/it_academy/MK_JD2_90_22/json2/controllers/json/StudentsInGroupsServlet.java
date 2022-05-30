@@ -6,7 +6,8 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import org.it_academy.MK_JD2_90_22.json2.dto.GroupId;
 import org.it_academy.MK_JD2_90_22.json2.dto.StudentId;
 import org.it_academy.MK_JD2_90_22.json2.exceptions.StudentsInGroupsServiceException;
-import org.it_academy.MK_JD2_90_22.json2.dao.api.ICrossServiceController;
+import org.it_academy.MK_JD2_90_22.json2.exceptions.api.CoursesIllegalArgumentException;
+import org.it_academy.MK_JD2_90_22.json2.service.api.ICrossServiceController;
 import org.it_academy.MK_JD2_90_22.json2.dto.GroupStudentId;
 import org.it_academy.MK_JD2_90_22.json2.dto.GroupWithStudents;
 import org.it_academy.MK_JD2_90_22.json2.service.StudentsInGroupsService;
@@ -32,7 +33,6 @@ public class StudentsInGroupsServlet extends HttpServlet {
                 .setPropertyNamingStrategy(PropertyNamingStrategies.LOWER_CAMEL_CASE);
     }
 
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ControllerUtils.setEncodingType(req, resp);
@@ -44,7 +44,6 @@ public class StudentsInGroupsServlet extends HttpServlet {
         String result;
 
         try {
-
             if (studentId != null) {
 
                 result = mapper.writeValueAsString(
@@ -61,6 +60,7 @@ public class StudentsInGroupsServlet extends HttpServlet {
                         service.getG(Long.parseLong(groupId))));
 
             }else {
+
                 StringBuilder json = new StringBuilder();
 
                 for (GroupWithStudents groups : service.getAll()) {
@@ -78,7 +78,7 @@ public class StudentsInGroupsServlet extends HttpServlet {
         }catch (JsonProcessingException e) {
             log(e.getMessage(), e);
 
-        }catch (StudentsInGroupsServiceException e) {
+        }catch (CoursesIllegalArgumentException e) {
             resp.setStatus(e.getStatus());
 
             if (e.getStatus() == 500) {
@@ -97,7 +97,9 @@ public class StudentsInGroupsServlet extends HttpServlet {
         GroupStudentId groupStudentId;
 
         try {
-            groupStudentId = mapper.readValue(req.getInputStream(), GroupStudentId.class);
+            groupStudentId = mapper.readValue(
+                    req.getInputStream(), GroupStudentId.class
+            );
 
         }catch (JsonProcessingException e) {
             resp.setStatus(415);
@@ -114,7 +116,7 @@ public class StudentsInGroupsServlet extends HttpServlet {
             resp.setStatus(201);
             writer.write("Created");
 
-        }catch (StudentsInGroupsServiceException e) {
+        }catch (CoursesIllegalArgumentException e) {
             resp.setStatus(e.getStatus());
 
             if (e.getStatus() == 500) {

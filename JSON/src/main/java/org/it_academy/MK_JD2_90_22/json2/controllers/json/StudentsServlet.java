@@ -3,11 +3,13 @@ package org.it_academy.MK_JD2_90_22.json2.controllers.json;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import org.it_academy.MK_JD2_90_22.json2.controllers.utils.ControllerUtils;
 import org.it_academy.MK_JD2_90_22.json2.dao.entity.Student;
 import org.it_academy.MK_JD2_90_22.json2.dto.NewStudent;
 import org.it_academy.MK_JD2_90_22.json2.dto.StudentId;
 import org.it_academy.MK_JD2_90_22.json2.dto.UpdatedStudent;
 import org.it_academy.MK_JD2_90_22.json2.exceptions.StudentsServiceException;
+import org.it_academy.MK_JD2_90_22.json2.exceptions.api.CoursesIllegalArgumentException;
 import org.it_academy.MK_JD2_90_22.json2.service.StudentsService;
 import org.it_academy.MK_JD2_90_22.json2.service.api.ICRUDStudentsService;
 
@@ -35,7 +37,8 @@ public class StudentsServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        setEncodingType(req, resp);
+        ControllerUtils.setEncodingType(req, resp);
+
         PrintWriter writer = resp.getWriter();
         String parameterId = req.getParameter("id");
 
@@ -57,7 +60,7 @@ public class StudentsServlet extends HttpServlet {
                 writer.write("Incorrect parameter id");
                 return;
 
-            } catch (StudentsServiceException e) {
+            } catch (CoursesIllegalArgumentException e) {
                 sendError(resp, e);
                 return;
             }
@@ -68,7 +71,7 @@ public class StudentsServlet extends HttpServlet {
         try {
             students = service.getAll();
 
-        }catch (StudentsServiceException e) {
+        }catch (CoursesIllegalArgumentException e) {
             sendError(resp, e);
             return;
         }
@@ -85,7 +88,7 @@ public class StudentsServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        setEncodingType(req, resp);
+        ControllerUtils.setEncodingType(req, resp);
 
         try {
             NewStudent newStudent = mapper.readValue(req.getInputStream(), NewStudent.class);
@@ -98,12 +101,11 @@ public class StudentsServlet extends HttpServlet {
             resp.setContentType("application/json");
             writer.write(mapper.writeValueAsString(save));
 
-
         }catch (JsonProcessingException e) {
             log(e.getMessage(), e);
             resp.setStatus(415);
 
-        }catch (StudentsServiceException e) {
+        }catch (CoursesIllegalArgumentException e) {
             sendError(resp, e);
 
         }catch (IOException e) {
@@ -113,7 +115,7 @@ public class StudentsServlet extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        setEncodingType(req, resp);
+        ControllerUtils.setEncodingType(req, resp);
 
         try {
             UpdatedStudent updatedStudent = mapper.readValue(req.getInputStream(), UpdatedStudent.class);
@@ -125,7 +127,7 @@ public class StudentsServlet extends HttpServlet {
             log(e.getMessage(), e);
             resp.setStatus(415);
 
-        }catch (StudentsServiceException e) {
+        }catch (CoursesIllegalArgumentException e) {
             sendError(resp, e);
 
         }catch (IOException e) {
@@ -135,7 +137,7 @@ public class StudentsServlet extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        setEncodingType(req, resp);
+        ControllerUtils.setEncodingType(req, resp);
 
         try {
             StudentId studentId = mapper.readValue(req.getInputStream(), StudentId.class);
@@ -155,7 +157,7 @@ public class StudentsServlet extends HttpServlet {
         }
     }
 
-    private void sendError(HttpServletResponse resp, StudentsServiceException exception) {
+    private void sendError(HttpServletResponse resp, CoursesIllegalArgumentException exception) {
         int status = exception.getStatus();
         resp.setStatus(exception.getStatus());
 
@@ -169,10 +171,5 @@ public class StudentsServlet extends HttpServlet {
         if (status == 500) {
             log(exception.getMessage(), exception);
         }
-    }
-
-    private void setEncodingType(HttpServletRequest req, HttpServletResponse resp) throws UnsupportedEncodingException {
-        req.setCharacterEncoding("UTF-8");
-        resp.setContentType("text/html; charset=utf-8");
     }
 }

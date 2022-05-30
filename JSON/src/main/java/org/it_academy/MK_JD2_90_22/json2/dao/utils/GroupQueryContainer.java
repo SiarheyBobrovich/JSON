@@ -6,28 +6,27 @@ public class GroupQueryContainer {
     private static final String CROSS_DB_NAME = "courses.students_in_groups";
 
     public static final String INSERT_QUERY =
-            " INSERT INTO " +
-                    DB_NAME + "\n" +
+            "INSERT INTO " +
+                DB_NAME + "\n" +
                     "\t(name)\n" +
-                    "\tVALUES " +
-                    "(?);"
-            ;
+            "\tVALUES " +
+                "(?);\n";
 
     public static final String SELECT_QUERY =
             " SELECT " +
-                    "id, name " +
-                    "FROM " +
-                    DB_NAME + ";"
-            ;
+                "id, name " +
+            "FROM " +
+                DB_NAME + " " +
+            "ORDER BY " +
+                "id;\n";
 
     public static final String SELECT_WHERE_QUERY =
             " SELECT " +
-                    "id, name " +
-                    "FROM " +
-                    DB_NAME + " " +
-                    "WHERE " +
-                    "id = ?;\n"
-            ;
+                "id, name " +
+            "FROM " +
+                DB_NAME + " " +
+            "WHERE " +
+                "id = ?;\n";
 
     public static final String UPDATE_QUERY =
             " UPDATE " +
@@ -35,8 +34,7 @@ public class GroupQueryContainer {
                     "SET " +
                     "name = ? " +
                     "WHERE " +
-                    "id = ?;\n"
-            ;
+                    "id = ?;\n";
 
     public static final String deleteQuery =
             " DELETE FROM " +
@@ -49,5 +47,4 @@ public class GroupQueryContainer {
                     CROSS_DB_NAME + " " +
                     "WHERE " +
                     "group_id = ?;\n";
-
 }

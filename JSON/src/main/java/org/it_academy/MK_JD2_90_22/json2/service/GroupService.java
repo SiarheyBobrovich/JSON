@@ -10,7 +10,7 @@ import org.it_academy.MK_JD2_90_22.json2.dao.entity.Group;
 import org.it_academy.MK_JD2_90_22.json2.exceptions.GroupDaoException;
 import org.it_academy.MK_JD2_90_22.json2.exceptions.GroupServiceException;
 import org.it_academy.MK_JD2_90_22.json2.dto.NewGroup;
-import org.it_academy.MK_JD2_90_22.json2.mapers.GroupMapper;
+import org.it_academy.MK_JD2_90_22.json2.factories.GroupFactory;
 import org.it_academy.MK_JD2_90_22.json2.service.api.ICRUDGroupService;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public class GroupService implements ICRUDGroupService {
             throw new GroupServiceException(409, "Conflict");
         }
 
-        Group entity = GroupMapper.getInstance().map(group);
+        Group entity = GroupFactory.getInstance().get(group);
 
         try {
             return dao.save(entity);
@@ -109,7 +109,7 @@ public class GroupService implements ICRUDGroupService {
             } catch (GroupDaoException e) {/*ignore*/}
         }
 
-        Group entity = GroupMapper.getInstance().map(group);
+        Group entity = GroupFactory.getInstance().get(group);
 
         try {
             dao.update(entity);

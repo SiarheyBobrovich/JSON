@@ -3,11 +3,13 @@ package org.it_academy.MK_JD2_90_22.json2.controllers.json;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import org.it_academy.MK_JD2_90_22.json2.controllers.utils.ControllerUtils;
 import org.it_academy.MK_JD2_90_22.json2.dto.NewGroup;
 import org.it_academy.MK_JD2_90_22.json2.dto.UpdatedGroup;
 import org.it_academy.MK_JD2_90_22.json2.dto.GroupId;
 import org.it_academy.MK_JD2_90_22.json2.dao.entity.Group;
 import org.it_academy.MK_JD2_90_22.json2.exceptions.GroupServiceException;
+import org.it_academy.MK_JD2_90_22.json2.exceptions.api.CoursesIllegalArgumentException;
 import org.it_academy.MK_JD2_90_22.json2.service.GroupService;
 import org.it_academy.MK_JD2_90_22.json2.service.api.ICRUDGroupService;
 
@@ -18,14 +20,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.rmi.RemoteException;
 
 @WebServlet(name = "Group", urlPatterns = "/group1")
 public class GroupServlet extends HttpServlet {
 
     private static final ICRUDGroupService service = GroupService.getInstance();
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
     public GroupServlet() {
         this.mapper = new ObjectMapper()
@@ -34,38 +34,35 @@ public class GroupServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        setEncodingType(req, resp);
+        ControllerUtils.setEncodingType(req, resp);
 
-        long id = 0;
-        boolean isId = true;
+        long id;
 
-        String parameter = req.getParameter("id");
+        String parameterId = req.getParameter("id");
         PrintWriter writer = resp.getWriter();
 
-        try {
-            id = Long.parseLong(parameter);
+        if (parameterId != null) {
+            try {
+                id = Long.parseLong(parameterId);
 
-        }catch (NumberFormatException e) {
-            if (parameter != null) {
+            }catch (NumberFormatException e) {
                 resp.setStatus(400);
                 return;
             }
 
-            isId = false;
-        }
-
-        if (isId) {
             try {
                 Group group = service.get(id);
 
                 resp.setContentType("application/json");
                 writer.write(mapper.writeValueAsString(group));
 
-            }catch (GroupServiceException e) {
+            }catch (CoursesIllegalArgumentException e) {
                 resp.setStatus(e.getStatus());
                 writer.write(e.getMessage());
+
             }catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
+                resp.setStatus(500);
+                log(e.getMessage(), e);
             }
 
         }else {
@@ -76,19 +73,21 @@ public class GroupServlet extends HttpServlet {
                     writer.write(mapper.writeValueAsString(group));
                 }
 
-            } catch (GroupServiceException  e) {
+            } catch (CoursesIllegalArgumentException e) {
                 log(e.getMessage(), e.getCause());
                 resp.setStatus(e.getStatus());
                 writer.write(e.getMessage());
+
             } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
+                resp.setStatus(500);
+                log(e.getMessage(), e);
             }
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        setEncodingType(req, resp);
+        ControllerUtils.setEncodingType(req, resp);
 
         NewGroup newGroup;
 
@@ -96,8 +95,10 @@ public class GroupServlet extends HttpServlet {
 
         try {
             newGroup = mapper.readValue(req.getInputStream(), NewGroup.class);
+
         }catch (JsonProcessingException e) {
             resp.setStatus(415);
+            writer.write("Unsupported media type");
             return;
         }
 
@@ -114,13 +115,14 @@ public class GroupServlet extends HttpServlet {
             writer.write(e.getMessage());
 
         }catch (JsonProcessingException e) {
-            throw new RemoteException(e.getMessage(), e.getCause());
+            resp.setStatus(500);
+            log(e.getMessage(), e);
         }
     }
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        setEncodingType(req, resp);
+        ControllerUtils.setEncodingType(req, resp);
 
         PrintWriter writer = resp.getWriter();
 
@@ -128,8 +130,10 @@ public class GroupServlet extends HttpServlet {
 
         try {
             group = mapper.readValue(req.getInputStream(), UpdatedGroup.class);
+
         }catch (JsonProcessingException e) {
             resp.setStatus(415);
+            writer.write("Unsupported media type");
             return;
         }
 
@@ -137,7 +141,7 @@ public class GroupServlet extends HttpServlet {
             service.update(group);
             resp.setStatus(204);
 
-        }catch (GroupServiceException e) {
+        }catch (CoursesIllegalArgumentException e) {
             resp.setStatus(e.getStatus());
             writer.write(e.getMessage());
         }
@@ -145,15 +149,17 @@ public class GroupServlet extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        setEncodingType(req, resp);
+        ControllerUtils.setEncodingType(req, resp);
 
         GroupId dto;
         PrintWriter writer = resp.getWriter();
 
         try {
              dto = mapper.readValue(req.getInputStream(), GroupId.class);
+
         }catch (JsonProcessingException e) {
             resp.setStatus(415);
+            writer.write("Unsupported media type");
             return;
         }
 
@@ -161,14 +167,9 @@ public class GroupServlet extends HttpServlet {
             service.delete(dto);
             resp.setStatus(204);
 
-        }catch (GroupServiceException e) {
+        }catch (CoursesIllegalArgumentException e) {
             resp.setStatus(e.getStatus());
             writer.write(e.getMessage());
         }
-    }
-
-    private void setEncodingType(HttpServletRequest req, HttpServletResponse resp) throws UnsupportedEncodingException {
-        req.setCharacterEncoding("UTF-8");
-        resp.setContentType("text/html; charset=utf-8");
     }
 }

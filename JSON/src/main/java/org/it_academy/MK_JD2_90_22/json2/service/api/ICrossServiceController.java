@@ -1,4 +1,4 @@
-package org.it_academy.MK_JD2_90_22.json2.dao.api;
+package org.it_academy.MK_JD2_90_22.json2.service.api;
 
 import org.it_academy.MK_JD2_90_22.json2.dao.entity.Group;
 import org.it_academy.MK_JD2_90_22.json2.dto.GroupId;
