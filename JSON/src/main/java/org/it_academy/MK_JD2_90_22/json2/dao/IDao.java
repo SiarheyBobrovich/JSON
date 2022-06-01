@@ -1,7 +1,5 @@
 package org.it_academy.MK_JD2_90_22.json2.dao;
 
-import org.it_academy.MK_JD2_90_22.json.dao.DataSourceFactory;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

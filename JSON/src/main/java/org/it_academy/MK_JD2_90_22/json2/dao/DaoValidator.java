@@ -1,8 +1,7 @@
 package org.it_academy.MK_JD2_90_22.json2.dao;
 
-import org.it_academy.MK_JD2_90_22.json.exceptions.dao.GroupDaoException;
 import org.it_academy.MK_JD2_90_22.json2.dao.api.IDaoValidator;
-import org.it_academy.MK_JD2_90_22.json2.exceptions.StudentsInGroupsDaoException;
+import org.it_academy.MK_JD2_90_22.json2.exceptions.ValidationException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -35,7 +34,7 @@ public class DaoValidator implements IDaoValidator {
             return statement.executeQuery().next();
 
         }catch (SQLException e) {
-            throw new GroupDaoException(e.getMessage());
+            throw new ValidationException(500, e.getMessage(), e);
         }
     }
 
@@ -49,7 +48,7 @@ public class DaoValidator implements IDaoValidator {
             return statement.executeQuery().next();
 
         }catch (SQLException e) {
-            throw new StudentsInGroupsDaoException(500, e.getMessage(), e) {
+            throw new ValidationException(500, e.getMessage(), e) {
             };
         }
     }

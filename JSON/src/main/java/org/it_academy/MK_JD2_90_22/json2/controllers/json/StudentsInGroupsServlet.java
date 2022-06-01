@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet(name = "StudentsInGroupsServlet", urlPatterns = "/group1/students1")
+@WebServlet(name = "StudentsInGroupsServlet", urlPatterns = "/group/students")
 public class StudentsInGroupsServlet extends HttpServlet {
 
     private final ICrossServiceController service = StudentsInGroupsService.getInstance();

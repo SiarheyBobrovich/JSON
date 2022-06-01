@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet(name = "Group", urlPatterns = "/group1")
+@WebServlet(name = "Group", urlPatterns = "/group")
 public class GroupServlet extends HttpServlet {
 
     private static final ICRUDGroupService service = GroupService.getInstance();
